@@ -7,9 +7,13 @@ const TabLayout = () => {
   return (
     <Tabs>
     
-      <Tabs.Screen name='profile'/>
+      
       <Tabs.Screen name='Home'/>
       <Tabs.Screen name='Docs'/>
+      <Tabs.Screen name='Reports'/>
+      <Tabs.Screen name='Tasks'/>
+      <Tabs.Screen name='profile'/>
+
       
       </Tabs>
   )
