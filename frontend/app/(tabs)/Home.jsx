@@ -1,6 +1,9 @@
 import { StyleSheet, Text, View ,Image,TouchableOpacity} from 'react-native'
 import React from 'react'
 import { Link } from 'expo-router'
+import { Button } from 'react-native';
+
+
 
 const Home = () => {
   return (
@@ -28,15 +31,18 @@ const Home = () => {
         <View style={styles.user}>
         <TouchableOpacity  >
        
-      <Link href='CreateprojectScreen'  >
+      <Link href='/ClientsManage'  >
       <Image style={styles.client} source={require('../../assets/images/public-relation.png')} />{'\n'}
       <Text style={styles. clienttext}>Clients</Text>
+     
+
+
   
      </Link>
       </TouchableOpacity>
       <TouchableOpacity  >
        
-       <Link href='CreateprojectScreen'  >
+       <Link href='/FinanceManage'  >
        <Image style={styles.Finance} source={require('../../assets/images/profit.png')} />{'\n'}
        <Text style={styles. clienttext}>Finance</Text>
    
@@ -48,7 +54,7 @@ const Home = () => {
       <View style={styles.user}>
         <TouchableOpacity  >
        
-      <Link href='CreateprojectScreen'  >
+      <Link href='/workersManage'  >
       <Image style={styles.client} source={require('../../assets/images/engineer.png')} />{'\n'}
       <Text style={styles. clienttext}>Workers</Text>
   
@@ -56,7 +62,7 @@ const Home = () => {
       </TouchableOpacity>
       <TouchableOpacity  >
        
-       <Link href='CreateprojectScreen'  >
+       <Link href='/QualityManage'  >
        <Image style={styles.Finance} source={require('../../assets/images/quality-assurance.png')} />{'\n'}
        <Text style={styles. clienttext}>Q.Assurance</Text>
    
@@ -68,7 +74,7 @@ const Home = () => {
       <View style={styles.user}>
         <TouchableOpacity  >
        
-      <Link href='CreateprojectScreen'  >
+      <Link href='/SupplierManage'  >
       <Image style={styles.client} source={require('../../assets/images/wholesale.png')} />{'\n'}
       <Text style={styles. clienttext}>Supplier</Text>
 
@@ -76,7 +82,7 @@ const Home = () => {
       </TouchableOpacity>
       <TouchableOpacity  >
        
-       <Link href='CreateprojectScreen'  >
+       <Link href='/SupplierManage'  >
        <Image style={styles.Finance} source={require('../../assets/images/supervisor.png')} />{'\n'}
        <Text style={styles. clienttext}>Site Supervisor</Text>
    

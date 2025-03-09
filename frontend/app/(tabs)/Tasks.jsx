@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View ,Image,textStyle,TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, View ,Image,TouchableOpacity} from 'react-native';
 import React from 'react';
 import {Table , Row ,Rows} from 'react-native-table-component';
 import { Link } from 'expo-router'
@@ -29,8 +29,8 @@ const Report = () => {
 
   
         <Table  borderStyle={{ borderWidth: 1, borderColor: '#ddd',borderRadius:8 }} style={styles.Table}>
-            <Row data={tableHead} style={styles.head} textStyle={styles.text}/>
-            <Rows data={tableData} textStyle={styles.text}/>
+            <Row data={tableHead} style={styles.head} />
+            <Rows data={tableData} style={styles.text}/>
         </Table>
         </View>
    

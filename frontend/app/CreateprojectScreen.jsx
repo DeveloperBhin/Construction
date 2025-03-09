@@ -1,6 +1,8 @@
 import { StyleSheet, Text, View ,TextInput,TouchableOpacity} from 'react-native'
 import React from 'react'
 import { Link } from 'expo-router'
+import TabsLayout from './(tabs)/_layout'; // Adjust the path as necessary
+
 
 const home = () => {
   return (

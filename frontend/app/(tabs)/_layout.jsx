@@ -1,24 +1,44 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import {Tabs} from 'expo-router'
+import {Tabs ,Stack} from 'expo-router'
+import { Ionicons } from '@expo/vector-icons';
 
 
-const TabLayout = () => {
+function TabLayout() {
   return (
-    <Tabs>
-    
-      
-      <Tabs.Screen name='Home'/>
-      <Tabs.Screen name='Docs'/>
-      <Tabs.Screen name='Reports'/>
-      <Tabs.Screen name='Tasks'/>
-      <Tabs.Screen name='profile'/>
+    <>
+    <Tabs screenOptions={{ headerShown: false }}>
 
-      
-      </Tabs>
-  )
+
+
+      <Tabs.Screen name='Home' options={{
+        tabBarLabel: 'Home',
+        tabBarIcon: ({ color, size }) => <Ionicons name="home" color={color} size={size} />,
+      }} />
+      <Tabs.Screen name='Docs' options={{
+        tabBarLabel: 'Docs',
+        tabBarIcon: ({ color, size }) => <Ionicons name="document-text" color={color} size={size} />,
+      }} />
+      <Tabs.Screen name='Reports' options={{
+        tabBarLabel: 'Reports',
+        tabBarIcon: ({ color, size }) => <Ionicons name="" color={color} size={size} />,
+      }} />
+      <Tabs.Screen name='Tasks' options={{
+        tabBarLabel: 'Tasks',
+        tabBarIcon: ({ color, size }) => <Ionicons name="list" color={color} size={size} />,
+      }} />
+      <Tabs.Screen name='profile' options={{
+        tabBarLabel: 'Profile',
+        tabBarIcon: ({ color, size }) => <Ionicons name="person" color={color} size={size} /> 
+      }} />
+
+
+    </Tabs>
+    
+  </>
+  );
 }
 
-export default TabLayout
+export default TabLayout;
 
 const styles = StyleSheet.create({})

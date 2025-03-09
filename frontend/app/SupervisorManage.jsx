@@ -1,14 +1,16 @@
 import { StyleSheet, Text, View ,Image} from 'react-native';
 import React from 'react';
 import {Table , Row ,Rows} from 'react-native-table-component';
+import { Link } from 'expo-router'
+
 
 const Report = () => {
-    const tableHead=['Task','Status','Asignees','Due Date','Tags','File'];
+    const tableHead=['Report','Task','Status','Asignees','Due Date','Tags','File'];
     const tableData=[];
   return (
     
     <View style={styles.container}>
-      <Image style={styles.logo} source={require('../../assets/images/workers.png')} />
+      <Image style={styles.logo} source={require('../assets/images/workers.png')} />
   
     
   
@@ -17,8 +19,16 @@ const Report = () => {
         <Text style={styles.Pcode}>Project Code:</Text>
       </View>
 
+      <View style={styles.view}>
+         <Link   href='/Task '>
+        <Text style={styles.Text}>View Response: <Image style={styles.image} source={require('../assets/images/response.png')} />
+        </Text>
+       </Link>
+       
+      </View>
     
    <View style={styles.container1}>
+    <Text>Reports</Text>
         <Table  borderStyle={{ borderWidth: 1, borderColor: '#ddd',borderRadius:8 }} style={styles.Table}>
             <Row data={tableHead} style={styles.head} />
             <Rows data={tableData} style={styles.text}/>
@@ -49,9 +59,17 @@ export default Report
     
       backgroundColor: '#F7E4DE',
     },
+    view:{
+ backgroundColor:'#D9734A',
+ marginTop:10,
+marginLeft:'50%',
+flexDirection:'row',
+borderRadius:8,
+alignItems:'center'
+    },
     Text: {
-      fontSize: 18,
-    fontWeight: 'bold',
+      fontSize: 20,
+   
     color: 'black',
     textAlign: 'center',
     },
@@ -67,15 +85,14 @@ export default Report
     },
   image:{
    
+      width:20,
+      height:15,
+     
+     
+   
       
        
-        width:'100%',
-        height:'60%',
      
-  
-     
-      marginTop:0,
-      
      
     },
 
