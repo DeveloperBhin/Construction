@@ -1,38 +1,69 @@
-import { StyleSheet, Text, View ,TextInput,TouchableOpacity} from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View ,TextInput,Button,ActivityIndicator} from 'react-native'
+import React, { useState } from 'react'
 import { Link } from 'expo-router'
 
-const home = () => {
+import { useNavigation } from 'expo-router'
+
+const Login = () => {
+  const[username, setUsername] =useState('');
+  const[password,setPassword] = useState('');
+  const[message,setMessage] =useState ('') ;
+  const navigation = useNavigation('');
+  const[loading,setLoading] =useState('');
+
+  const handleLogin =async()=>{
+    setMessage('')
+    setLoading(true)
+
+    try{
+      const Response = await fetch ('http://192.168.1.150:8000/Login/',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({username,password}),
+      });
+      if(Response.ok){
+
+        navigation.navigate('(tabs)', { screen: 'Home' });
+
+      }else{
+        const data = await Response.json();
+         setMessage(data.message|| 'An error ocurred');
+      }
+    } catch (error){
+      console.error('error during fetch',error);
+      setMessage('an error occured while trying to Login');
+    } 
+    finally{
+      setLoading(false);
+
+}
+
+  };
   return (
     
     <View style={styles.container}>
       <View style={styles.container1}>
     
-    <TextInput 
-    style={styles.TextInput}
-    placeholder='create_project_name'
-    value='project name'
-    
-    />
-   <TextInput 
-   style={styles.TextInput}
-    placeholder='create_project_code'
-    value='project code'
-    
-    />
-  
-   <TextInput 
-   style={styles.TextInput}
-    placeholder='create_project_password'
-    value='project password'
-    
-    />
-  
+      <TextInput
+          style={styles.TextInput}
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
+        />
+        <TextInput
+          style={styles.TextInput}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
    
-    
-      <TouchableOpacity style={styles.button}   title='Register'>
-      <Link href='Home'   >Login</Link>
-      </TouchableOpacity>
+   {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          <Button title="Login" onPress={handleLogin} />
+        )}
+        {message ? <Text style={styles.message}>{message}</Text> : null}
       
     </View>
     </View>
@@ -40,7 +71,7 @@ const home = () => {
   )
 }
 
-export default home
+export default Login
 
 
   const styles = StyleSheet.create({
