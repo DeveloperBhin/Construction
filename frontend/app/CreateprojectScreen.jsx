@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, TextInput, Button, Text, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
+import {Link} from 'expo-router'
 const CreateprojectScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -37,7 +37,16 @@ const CreateprojectScreen = () => {
   };
 
   return (
+
     <View style={styles.container}>
+       <TouchableOpacity  >
+       
+       <Link href='RegisterIntoExistingProject/'  >
+      <Text style={styles. clienttext}>Register Into Existing Projec</Text>
+   
+      </Link>
+       </TouchableOpacity>
+      
       <View style={styles.container1}>
         <TextInput
           style={styles.TextInput}

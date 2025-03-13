@@ -1,136 +1,118 @@
-import { StyleSheet, Text, View ,Image} from 'react-native';
-import React from 'react';
-import {Table , Row ,Rows} from 'react-native-table-component';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
 
-const Report = () => {
-    const tableHead=['Task','Status','Asignees','Due Date','Tags','File'];
-    const tableData=[];
+const Client = () => {
+  const [clients, setClients] = useState([]);  // Ensure it's an array
+  const [loading, setLoading] = useState(false);  // State to track loading status
+
+  useEffect(() => {
+    fetchClients();
+  }, []);
+
+  const fetchClients = async () => {
+    setLoading(true);
+
+    try {
+      const response = await fetch('http://192.168.1.150:8000/Clients/');
+      const data = await response.json();
+      setClients(data);
+    } catch (error) {
+      console.error("Error fetching clients:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderItem = ({ item }) => (
+    <View style={styles.tableContainer}>
+      <View style={styles.row}>
+      <Text style={styles.cellHeader}>Task:</Text> 
+      <Text style={styles.cell}>{item.Task}</Text>
+      </View>
+      <View style={styles.row}>
+      <Text style={styles.cellHeader}>Status:</Text>
+      <Text style={styles.cell}>{item.Status}</Text>
+      </View>
+      <View style={styles.row}>
+      <Text style={styles.cellHeader}>Assignees: </Text>
+      <Text style={styles.cell}>{item.Assignees}</Text>
+      </View>
+      <View style={styles.row}>
+      <Text style={styles.cellHeader}>Due Date:</Text> 
+      <Text style={styles.cell}>{item.DueDate}</Text>
+      </View>
+      <View style={styles.row}>
+      <Text style={styles.cellHeader}>Tags:</Text>
+      <Text style={styles.cell}> {item.Tags}</Text>
+      </View>
+      <View style={styles.row}>
+      <Text style={styles.cellHeader}>File: </Text>
+      <Text style={styles.cell}>{item.File}</Text>
+      </View>
+    </View>
+  );
+
   return (
-    
     <View style={styles.container}>
-      <Image style={styles.logo} source={require('../../assets/images/workers.png')} />
-  
-    
-  
-      <View style={styles.button}>
-        <Text style={styles.Pname}>Project Name:</Text>
-        <Text style={styles.Pcode}>Project Code:</Text>
-      </View>
+      {loading ? (
+        <ActivityIndicator size="large" color="#9A340C" />
+      ) : clients.length > 0 ? (
+        <FlatList
+          data={clients}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          contentContainerStyle={styles.listContainer}
+        />
+      ) : (
+        <Text style={styles.noDataText}>No clients available</Text>
+      )}
+    </View>
+  );
+};
 
-    
-   <View style={styles.container1}>
-        <Table  borderStyle={{ borderWidth: 1, borderColor: '#ddd',borderRadius:8 }} style={styles.Table}>
-            <Row data={tableHead} style={styles.head} />
-            <Rows data={tableData} style={styles.text}/>
-        </Table>
-        </View>
-   
+export default Client;
 
+const styles = StyleSheet.create({
 
-      </View>
-   
-
-     
-      
-     
-     
-  
-
-    
-  )
-}
-
-export default Report
-
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,   // Ensures full screen
-    
-      backgroundColor: '#F7E4DE',
-    },
-    Text: {
-      fontSize: 18,
+  clientCard: {
+    backgroundColor: '#f9f9f9',
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 8,
+    elevation: 1,
+  },
+  tableContainer: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    margin: 10,
+    padding: 10,
+  },
+  clientTask: { fontSize: 18, fontWeight: 'bold' },
+  clientStatus: { marginTop: 8, color: '#555' },
+  clientAssignees: { marginTop: 8, color: '#555' },
+  clientDueDate: { marginTop: 8, color: '#555' },
+  clientTags: { marginTop: 8, color: '#555' },
+  clientFile: { marginTop: 8, color: '#555' },
+  noDataText: {
+    fontSize: 16,
+    color: '#9A340C',
+    marginTop: 20,
+  },
+  row: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    paddingVertical: 8,
+  },
+  cellHeader: {
+    flex: 0,
     fontWeight: 'bold',
-    color: 'black',
-    textAlign: 'center',
-    },
-   
+    paddingHorizontal: 5,
+  },
+  cell: {
+    flex:0,
+    paddingHorizontal: 5,
 
-    logo:{
-      
-      marginTop:0,
-      width:40,
-      height:40,
-      marginLeft:150,
-
-    },
-  image:{
-   
-      
-       
-        width:'100%',
-        height:'60%',
-     
-  
-     
-      marginTop:0,
-      
-     
-    },
-
-
-    button:{
-      fontSize: 18,
-      fontWeight: 'bold',
-      backgroundColor: '#9A340C',
-      height:60,
-      
-      
-      
-      borderRadius:8,
-      paddingHorizontal:10,
-      paddingVertical:15,
-      width:'100%',
- 
-      borderColor:'white',
-      borderWidth:1,
-      flexDirection:'row',
-      justifyContent:'space-between',
-
-      
-      
-
-    },
- 
- 
-    container1:{
-        marginTop:50,
-    
-        padding:20,
-      
-        
-    },
-
-   Table:{
-    borderWidth:4,
-   
-      backgroundColor:'#9A340C'
-    
-   },
-   head:{
-    height:40,
-    backgroundColor:''
-
-   },
-  text:
-    { margin:2, textAlign: 'center' ,color:''},
-
-  
-  
-    
-    
-      
-        
-
-  });
+  },
+});
