@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View ,TextInput,Button,ActivityIndicator} from 'react-native'
+import { StyleSheet, Text, View ,TextInput,Button,ActivityIndicator,Alert} from 'react-native'
 import React, { useState } from 'react'
 import { Link } from 'expo-router'
 
@@ -22,16 +22,16 @@ const Login = () => {
         body:JSON.stringify({username,password}),
       });
       if(Response.ok){
-
         navigation.navigate('(tabs)', { screen: 'Home' });
 
-      }else{
+      }else {
+        // If the response is not OK, try to parse the error message
         const data = await Response.json();
-         setMessage(data.message|| 'An error ocurred');
+        setMessage(data.message || 'An error occurred.'); // Fallback message
       }
-    } catch (error){
-      console.error('error during fetch',error);
-      setMessage('an error occured while trying to Login');
+    } catch (error) {
+      console.error('Error during fetch:', error);
+      setMessage('An error occurred while trying to register.'); // User-friendly message
     } 
     finally{
       setLoading(false);

@@ -30,7 +30,9 @@ const CreateprojectScreen = () => {
 
       const response = await fetch('http://192.168.1.150:8000/RegisterIntoExistingProject/', {
         method: 'POST',
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: { 
+          'X-CSRFToken': getCookie('csrftoken'),
+          'Content-Type': 'multipart/form-data' },
         body: formData,
       });
 

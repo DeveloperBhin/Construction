@@ -31,7 +31,7 @@ const Home = () => {
         <View style={styles.user}>
         <TouchableOpacity  >
        
-      <Link href='Client/ClientsManage'  >
+      <Link href='/ClientsManage'  >
       <Image style={styles.client} source={require('../../assets/images/public-relation.png')} />{'\n'}
       <Text style={styles. clienttext}>Clients</Text>
      
@@ -42,7 +42,7 @@ const Home = () => {
       </TouchableOpacity>
       <TouchableOpacity  >
        
-       <Link href='Finance/FinanceManage'  >
+       <Link href='/FinanceManage'  >
        <Image style={styles.Finance} source={require('../../assets/images/profit.png')} />{'\n'}
        <Text style={styles. clienttext}>Finance</Text>
    
@@ -54,7 +54,7 @@ const Home = () => {
       <View style={styles.user}>
         <TouchableOpacity  >
        
-      <Link href='worker/workersManage'  >
+      <Link href='/workersManage'  >
       <Image style={styles.client} source={require('../../assets/images/engineer.png')} />{'\n'}
       <Text style={styles. clienttext}>Workers</Text>
   
@@ -62,7 +62,7 @@ const Home = () => {
       </TouchableOpacity>
       <TouchableOpacity  >
        
-       <Link href='QA/QualityManage'  >
+       <Link href='/QualityManage'  >
        <Image style={styles.Finance} source={require('../../assets/images/quality-assurance.png')} />{'\n'}
        <Text style={styles. clienttext}>Q.Assurance</Text>
    

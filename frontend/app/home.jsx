@@ -17,6 +17,7 @@ const home = () => {
           We're here to help you stay on budget, track resources effectively, and make informed decisions for every project.{'\n'}
           Let's build smarter, together!</Text>
       </View>
+      <View style={styles.link}>
       <TouchableOpacity style={styles.button} >
       <Link href='CreateprojectScreen'  >Create Project</Link>
       </TouchableOpacity>
@@ -24,6 +25,16 @@ const home = () => {
       <TouchableOpacity style={styles.button1}   >
       <Link href='LoginScreen'   >Login</Link>
       </TouchableOpacity>
+      </View>
+      <View style={styles.link}>
+      <TouchableOpacity style={styles.button} >
+      <Link href='RegisterIntoExistingProject'  >Register Into Existing Project</Link>
+      </TouchableOpacity>
+      
+      <TouchableOpacity style={styles.button1}   >
+      <Link href='LoginIntoExistingProject'   >Login Into Existing Project</Link>
+      </TouchableOpacity>
+      </View>
       
     </View>
     
@@ -82,30 +93,38 @@ export default home
     button:{
       marginTop:150,
       backgroundColor: '#9A340C',
-      height:30,
+      height:70,
       justifyContent:'center',
       alignItems:'center',
       borderRadius:8,
       paddingHorizontal:10,
       paddingVertical:5,
-      width:'50%',
-      marginLeft:90,
+      width:'40%',
+      marginLeft:20
+    
       
 
     },
     button1:{
-      marginTop:5,
+      marginTop:150,
       backgroundColor: '#9A340C',
-      height:30,
+      height:70,
       justifyContent:'center',
       alignItems:'center',
       borderRadius:8,
       paddingHorizontal:10,
       paddingVertical:5,
-      width:'50%',
-      marginLeft:90,
+      width:'40%',
+      marginRight:20,
       
 
-    }
+    },
+
+    link:{
+      flexDirection:'row',
+      justifyContent:'space-between',
+      height:100
+
+    },
 
   });

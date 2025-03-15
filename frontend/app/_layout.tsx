@@ -7,8 +7,8 @@ export default function RootLayout() {
   <Stack.Screen name="CreateprojectScreen"/>;
   <Stack.Screen name="LoginScreen"/>;
   <Stack.Screen name="home"/>;
-  <Stack.Screen name="Task"/>
- 
+  
+ <Stack.Screen name="LoginIntoExistingProject"/>
  </Stack>
 );
 }

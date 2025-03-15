@@ -39,14 +39,7 @@ const CreateprojectScreen = () => {
   return (
 
     <View style={styles.container}>
-       <TouchableOpacity  >
-       
-       <Link href='RegisterIntoExistingProject/'  >
-      <Text style={styles. clienttext}>Register Into Existing Projec</Text>
-   
-      </Link>
-       </TouchableOpacity>
-      
+    
       <View style={styles.container1}>
         <TextInput
           style={styles.TextInput}

@@ -6,7 +6,18 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from .models import *
 from .Serializers import *
+from rest_framework_simplejwt.tokens import RefreshToken
+
 # Create your views here.
+
+
+def get_tokens_for_user(user):
+    """Generate JWT tokens for a user."""
+    refresh = RefreshToken.for_user(user)
+    return {
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+    }
 
 class Register(APIView):
     def post(self,request):
@@ -23,17 +34,23 @@ class Register(APIView):
         return Response({'message':'User register succesfully'},status=status.HTTP_201_CREATED)
     
     
+    
+
+
 class Login(APIView):
-      def post(self,request):  
-          username = request.data.get('username')
-          password = request.data.get('password')
-          
-          
-          user = authenticate(username=username,password=password)
-          if user:
-              return Response({'message':'Login succesfull'},status=status.HTTP_200_OK)
-          return Response({'message':'Invalid username or password'},status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        user = authenticate(username=username, password=password)
+        if user:
+            tokens = get_tokens_for_user(user)
+            return Response({'message': 'Login successful', 'tokens': tokens}, status=status.HTTP_200_OK)
         
+        return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+      
 class ClientView(APIView):
     def get(self,request):
      client = Clientmodel.objects.all()       
@@ -83,6 +100,20 @@ class RegisterIntoExistingProjectdetails(APIView):
          Regserializer = RegisterIntoExistingProjectSerializer(user)
          
          return Response(Regserializer.data)
+          
+          
+class LoginIntoExisting(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        user = authenticate(username=username, password=password)
+        if user:
+            tokens = get_tokens_for_user(user)
+            return Response({'message': 'Login successful', 'tokens': tokens}, status=status.HTTP_200_OK)
+        
+        return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
           
           
             
