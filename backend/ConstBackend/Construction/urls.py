@@ -7,6 +7,6 @@ urlpatterns = [
     path('Clients/',ClientView.as_view(),name='clientView'),
     path('Clients/<int:pk>/',Clientdetails.as_view(),name='clientdetails'),
     path('RegisterIntoExistingProject/',RegisterIntoExistingProjectView.as_view(),name='RegisterIntoExistingProject'),
-    path('RegisterIntoExistingProject/<int:pk>/',RegisterIntoExistingProjectdetails.as_view(),name='RegisterIntoExistingProject'),
+    path('LoginIntoExistingProject/',LoginIntoExistingProject.as_view(),name='LoginIntoExistingProject'),
 
 ]

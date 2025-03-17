@@ -24,6 +24,7 @@ WORKS_CHOICES= [
     
 ]
 class Clientmodel(models.Model):
+    
     Task = models.CharField (max_length=250)
     Status =models.name = models.CharField(max_length=20,choices=STATUS_CHOICES,default='Not Started')
     Assignees = models.CharField(max_length=255, blank=True, null=True)

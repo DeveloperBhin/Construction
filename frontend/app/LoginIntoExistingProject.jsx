@@ -1,70 +1,88 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, Text, ActivityIndicator, StyleSheet,TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TextInput, Button, Text, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
-import { Link } from 'expo-router'
+import { Link } from 'expo-router';
 
-
-const CreateprojectScreen = () => {
+const CreateProjectScreen = () => {
   const [Pname, setPname] = useState('');
   const [Pcode, setPcode] = useState('');
-  const[Name,setName] = useState('');
-  const[Email,setEmail]=useState('');
-  const[Phone,setPhone] = useState('');
-  const[TypeOfWork,setTypeOfWork] = useState('Clients');
-
+  const [TypeOfWork, setTypeOfWork] = useState(''); // Fix: Initialize as a string
+  const [workOptions, setWorkOptions] = useState([]); // Store fetched options separately
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
-  const handleCreateprojectScreen = async () => {
-    setLoading(true); // Start loading
-    setMessage(''); // Clear previous messages
+  useEffect(() => {
+    const fetchWorks = async () => {
+      try {
+        const response = await fetch('http://192.168.1.150:8000/RegisterIntoExistingProject/');
+        const data = await response.json();
+        setWorkOptions(data); // Assuming API returns a list of project names
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+        setMessage('Failed to fetch work types.');
+      }
+    };
+
+    fetchWorks();
+  }, []);
+
+  const handleCreateProject = async () => {
+    setLoading(true);
+    setMessage('');
 
     try {
-      const formData = new FormData();
-      formData.append('Pname',Pname);
-      formData.append('Pcode',Pcode);
-      formData.append('Name',Name);
-      formData.append('Email',Email);
-      formData.append('Phone',Phone);
-      formData.append('TypeOfWork',TypeOfWork)
-
-      const response = await fetch('http://192.168.1.150:8000/RegisterIntoExistingProject/', {
+      const response = await fetch('http://192.168.1.150:8000/LoginIntoExistingProject/', {
         method: 'POST',
-        headers: { 
-          'X-CSRFToken': getCookie('csrftoken'),
-          'Content-Type': 'multipart/form-data' },
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ Pname, Pcode, TypeOfWork }),
       });
 
       if (response.ok) {
-        setMessage('User register succesfully');
-        setPname('');
-        setPcode('');
-        setName('');
-        setEmail('');
-        setPhone('');
-        setTypeOfWork('Clients')
-        // If the response is OK, navigate to the LoginScreen
-        navigation.navigate('LoginScreen');
+        setMessage('User registered successfully');
+
+        let tabScreen = '';
+        switch (TypeOfWork) {
+          case 'Clients':
+            tabScreen = 'Client/(tabs)';
+            break;
+          case 'Finance':
+            tabScreen = 'Finance';
+            break;
+          case 'Worker':
+            tabScreen = 'worker/(tabs)';
+            break;
+          case 'Q.Assurance':
+            tabScreen = 'QA/(tabs)';
+            break;
+          case 'Supplier':
+            tabScreen = 'supplier/(tabs)';
+            break;
+          case 'Site Supervisor':
+            tabScreen = 'SiteSupervisor';
+            break;
+          default:
+            console.warn('Invalid TypeOfWork:', TypeOfWork);
+            tabScreen = 'Client';
+        }
+
+        navigation.navigate(tabScreen);
       } else {
-        // If the response is not OK, try to parse the error message
         const data = await response.json();
-        setMessage(data.message || 'An error occurred.'); // Fallback message
+        setMessage(data.message || 'An error occurred.');
       }
     } catch (error) {
-      console.error('Error during fetch:', error);
-      setMessage('An error occurred while trying to register.'); // User-friendly message
+      console.error('Error:', error);
+      setMessage('An error occurred while trying to register.');
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
-  return (
 
+  return (
     <View style={styles.container}>
-     
       <View style={styles.container1}>
         <TextInput
           style={styles.TextInput}
@@ -77,12 +95,9 @@ const CreateprojectScreen = () => {
           placeholder="Project Code"
           value={Pcode}
           onChangeText={setPcode}
-          
         />
-    
-       
-        
-          <Picker selectedValue={TypeOfWork} placeholder='Type Of Work' style={styles.picker} onValueChange={(itemValue)=>setTypeOfWork(itemValue)}>
+
+<Picker selectedValue={TypeOfWork} placeholder='Type Of Work' style={styles.picker} onValueChange={(itemValue)=>setTypeOfWork(itemValue)}>
             <Picker.Item label='Clients' value='Clients'/>
             <Picker.Item label='Finance' value='Finance'/>
             <Picker.Item label='Worker' value='Worker'/>
@@ -94,28 +109,11 @@ const CreateprojectScreen = () => {
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
-          <Button title="Register" onPress={handleCreateprojectScreen} />
+          <Button title="Login" onPress={handleCreateProject} />
         )}
+
         {message ? <Text style={styles.message}>{message}</Text> : null}
-          <TouchableOpacity style={styles.button1}   >
-              <Link href='Client/Home'   >CLIENTS</Link>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.button1}   >
-              <Link href='Finance/Home'   >Finance</Link>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.button1}   >
-              <Link href='worker/Home'   >worker</Link>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.button1}   >
-              <Link href='QA/Home'   >QA</Link>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.button1}   >
-              <Link href='supplier/Home'   >supplier</Link>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.button1}   >
-              <Link href='sitesupevisor/Home'   >sitesupevisor</Link>
-              </TouchableOpacity>
-              
+      
       </View>
     </View>
   );
@@ -221,4 +219,4 @@ image:{
 
 });
 
-export default CreateprojectScreen;
+export default CreateProjectScreen;

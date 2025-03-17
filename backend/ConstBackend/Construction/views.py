@@ -102,18 +102,26 @@ class RegisterIntoExistingProjectdetails(APIView):
          return Response(Regserializer.data)
           
           
-class LoginIntoExisting(APIView):
-    def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-
-        user = authenticate(username=username, password=password)
-        if user:
+class LoginIntoExistingProject(APIView):
+     def get(self,request):
+      user = RegisterIntoExistingProject.objects.all()       
+      serializer = RegisterIntoExistingProjectSerializer(user,many=True)
+      return Response(serializer.data)
+ 
+     def post(self, request):
+        Pname= request.data.get('Pname')
+        Pcode = request.data.get('Pcode')
+        TypeOfWork = request.data.get('TypeOfWork')
+         
+        try:
+            user = RegisterIntoExistingProject.objects.get(Pname=Pname,Pcode=Pcode,TypeOfWork=TypeOfWork)
+        
             tokens = get_tokens_for_user(user)
             return Response({'message': 'Login successful', 'tokens': tokens}, status=status.HTTP_200_OK)
+        except RegisterIntoExistingProject.DoesNotExist:
         
-        return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
-
+         return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+  
           
           
             

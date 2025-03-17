@@ -31,7 +31,7 @@ const CreateprojectScreen = () => {
       const response = await fetch('http://192.168.1.150:8000/RegisterIntoExistingProject/', {
         method: 'POST',
         headers: { 
-          'X-CSRFToken': getCookie('csrftoken'),
+         
           'Content-Type': 'multipart/form-data' },
         body: formData,
       });
@@ -45,7 +45,7 @@ const CreateprojectScreen = () => {
         setPhone('');
         setTypeOfWork('Clients')
         // If the response is OK, navigate to the LoginScreen
-        navigation.navigate('LoginScreen');
+        navigation.navigate('LoginIntoExistingProject');
       } else {
         // If the response is not OK, try to parse the error message
         const data = await response.json();
