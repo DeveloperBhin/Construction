@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-r&h@kx^k#*c29*$wn&r8prh8pz9@#)1n85tse@ya+26k5-n7ur
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.150', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['192.168.92.150', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'ConstBackend.wsgi.application'
 DATABASES = {
    'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME':'Construct' ,
+        'NAME':'Consbd' ,
         'HOST':'localhost' ,
         'PASSWORD':'' ,
         'USER':'root',
@@ -149,3 +149,5 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
+
+AUTH_MODEL_USER='Construction.CustomUser'

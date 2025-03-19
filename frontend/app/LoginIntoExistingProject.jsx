@@ -5,10 +5,10 @@ import { Picker } from '@react-native-picker/picker';
 import { Link } from 'expo-router';
 
 const CreateProjectScreen = () => {
-  const [Pname, setPname] = useState('');
-  const [Pcode, setPcode] = useState('');
-  const [TypeOfWork, setTypeOfWork] = useState(''); // Fix: Initialize as a string
-  const [workOptions, setWorkOptions] = useState([]); // Store fetched options separately
+  const [username,setUsername]= useState('')
+  const [password,setPassword] =useState('')
+ 
+  const[TypeOfWork,setTypeOfWork] = useState('Clients');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
@@ -16,7 +16,7 @@ const CreateProjectScreen = () => {
   useEffect(() => {
     const fetchWorks = async () => {
       try {
-        const response = await fetch('http://192.168.1.150:8000/RegisterIntoExistingProject/');
+        const response = await fetch('http://192.168.1.150:8000/register-into-existing-project/');
         const data = await response.json();
         setWorkOptions(data); // Assuming API returns a list of project names
       } catch (error) {
@@ -33,10 +33,10 @@ const CreateProjectScreen = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://192.168.1.150:8000/LoginIntoExistingProject/', {
+      const response = await fetch('http://192.168.92.150:8000/LoginIntoExistingProject/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ Pname, Pcode, TypeOfWork }),
+        body: JSON.stringify({ username,password, TypeOfWork }),
       });
 
       if (response.ok) {
@@ -87,14 +87,14 @@ const CreateProjectScreen = () => {
         <TextInput
           style={styles.TextInput}
           placeholder="Project Name"
-          value={Pname}
-          onChangeText={setPname}
+          value={username}
+          onChangeText={setUsername}
         />
         <TextInput
           style={styles.TextInput}
           placeholder="Project Code"
-          value={Pcode}
-          onChangeText={setPcode}
+          value={password}
+          onChangeText={setPassword}
         />
 
 <Picker selectedValue={TypeOfWork} placeholder='Type Of Work' style={styles.picker} onValueChange={(itemValue)=>setTypeOfWork(itemValue)}>

@@ -5,7 +5,8 @@ import { Link } from 'expo-router'
 import { useNavigation } from 'expo-router'
 
 const Login = () => {
-  const[username, setUsername] =useState('');
+  
+  const[username,setUsername] =useState('');
   const[password,setPassword] = useState('');
   const[message,setMessage] =useState ('') ;
   const navigation = useNavigation('');
@@ -16,7 +17,7 @@ const Login = () => {
     setLoading(true)
 
     try{
-      const Response = await fetch ('http://192.168.1.150:8000/Login/',{
+      const Response = await fetch ('http://192.168.92.150:8000/Login/',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({username,password}),
@@ -46,13 +47,14 @@ const Login = () => {
     
       <TextInput
           style={styles.TextInput}
-          placeholder="Username"
+          placeholder="Project Name"
           value={username}
           onChangeText={setUsername}
         />
+      
         <TextInput
           style={styles.TextInput}
-          placeholder="Password"
+          placeholder="Project Code"
           value={password}
           onChangeText={setPassword}
           secureTextEntry

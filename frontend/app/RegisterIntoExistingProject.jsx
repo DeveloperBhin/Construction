@@ -4,11 +4,11 @@ import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 
 const CreateprojectScreen = () => {
-  const [Pname, setPname] = useState('');
-  const [Pcode, setPcode] = useState('');
-  const[Name,setName] = useState('');
-  const[Email,setEmail]=useState('');
-  const[Phone,setPhone] = useState('');
+  const [username,setUsername]= useState('')
+  const [password,setPassword] =useState('')
+  const[name,setName] = useState('');
+  const[email,setEmail]=useState('');
+  const[phone,setPhone] = useState('');
   const[TypeOfWork,setTypeOfWork] = useState('Clients');
 
   const [message, setMessage] = useState('');
@@ -20,30 +20,17 @@ const CreateprojectScreen = () => {
     setMessage(''); // Clear previous messages
 
     try {
-      const formData = new FormData();
-      formData.append('Pname',Pname);
-      formData.append('Pcode',Pcode);
-      formData.append('Name',Name);
-      formData.append('Email',Email);
-      formData.append('Phone',Phone);
-      formData.append('TypeOfWork',TypeOfWork)
-
-      const response = await fetch('http://192.168.1.150:8000/RegisterIntoExistingProject/', {
+     
+      const response = await fetch('http://192.168.92.150:8000/register-into-existing-project/', {
         method: 'POST',
         headers: { 
          
-          'Content-Type': 'multipart/form-data' },
-        body: formData,
+          'Content-Type': 'application/json' },
+        body:JSON.stringify({username,password,name,email,phone,TypeOfWork}),
       });
 
       if (response.ok) {
-        setMessage('User register succesfully');
-        setPname('');
-        setPcode('');
-        setName('');
-        setEmail('');
-        setPhone('');
-        setTypeOfWork('Clients')
+     
         // If the response is OK, navigate to the LoginScreen
         navigation.navigate('LoginIntoExistingProject');
       } else {
@@ -67,32 +54,32 @@ const CreateprojectScreen = () => {
         <TextInput
           style={styles.TextInput}
           placeholder="Project Name"
-          value={Pname}
-          onChangeText={setPname}
+          value={username}
+          onChangeText={setUsername}
         />
         <TextInput
           style={styles.TextInput}
           placeholder="Project Code"
-          value={Pcode}
-          onChangeText={setPcode}
+          value={password}
+          onChangeText={setPassword}
           
         />
         <TextInput 
         style={styles.TextInput}
         placeholder='Your Name'
-        value={Name}
+        value={name}
         onChangeText={setName}/>
         <TextInput
         style={styles.TextInput}
         placeholder='Email'
-        value={Email}
+        value={email}
         onChangeText={setEmail}/>
 
        
           <TextInput
           style={styles.TextInput}
           placeholder='Phone'
-          value={Phone}
+          value={phone}
           onChangeText={setPhone}/>
           <Picker selectedValue={TypeOfWork} placeholder='Type Of Work' style={styles.picker} onValueChange={(itemValue)=>setTypeOfWork(itemValue)}>
             <Picker.Item label='Clients' value='Clients'/>
