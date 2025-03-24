@@ -9,16 +9,16 @@ from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
-# Create your views here.
+from rest_framework.authentication import TokenAuthentication,SessionAuthentication
+     
 
 
 def get_tokens_for_user(user):
-    """Generate JWT tokens for a user."""
-    refresh = Token.for_user(user)
+    token, _ = Token.objects.get_or_create(user=user)
     return {
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
+        'token': str(token),
     }
+
 User = get_user_model()
 
 class Register(APIView):
@@ -64,43 +64,43 @@ class Login(APIView):
         
         if user:
             return Response({'message': 'Login successful'}, status=status.HTTP_200_OK)
-        return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({'message': 'Login successful', 'token': token.key}, status=status.HTTP_200_OK)
+        
 
 
       
 class ClientView(APIView):
+
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
-    def get(self,request):
-     client = Clientmodel.objects.all()       
-     serializer = Clientserializer(client,many=True)
-     return Response(serializer.data)
- 
+
+    def get(self, request):
+        clients = Clientmodel.objects.all()
+        serializer = Clientserializer(clients, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    
     def post(self,request):
+        
+
         serializer = Clientserializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=request.user)
             return Response ( serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class Clientdetails(APIView):
-    permission_classes = [IsAuthenticated]
-    def get(self,request, pk):
-         try:
-            client = Clientmodel.objects.get(pk=pk) 
-         except Clientmodel.DoesNotExist: 
-            return Response ({'error':'Client Not Found'},status=status.HTTP_404_NOT_FOUND)
-         serializer = Clientserializer(client)
-         return Response (serializer.data)
-     
-     
-from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.views import APIView
+    def get(self, request, pk):
+        client = get_object_or_404(Clientmodel, pk=pk)
+        serializer = Clientserializer(client)
+        return Response(serializer.data)
 
-User = get_user_model()  # Ensure correct user model
+     
+
+
+
 
 class RegisterIntoExistingProjectView(APIView):
     def post(self, request):
@@ -121,10 +121,10 @@ class RegisterIntoExistingProjectView(APIView):
         if not user.check_password(password):
             return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Validate and save registration data
+       
         serializer = RegisterIntoExistingProjectSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=user)  # Save the data with the authenticated user
+            serializer.save(user=user)  
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -154,4 +154,161 @@ class LoginIntoExistingProject(APIView):
         if user:
             return Response({'message': 'Login successful'}, status=status.HTTP_200_OK)
         return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+class FinancecategoryView(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):  
+        categories = FinanceCategories.objects.all()
+        serializer = FinanceCategoryserializer(categories, many=True)
+        return Response(serializer.data)
+
+
+  
+    def post(self,request):
+        cat = FinanceCategoryserializer(data=request.data)
+        if cat.is_valid():
+           cat.save()
+           return Response(cat.data,status=status.HTTP_201_CREATED)
+        
+        return Response(cat.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class Financecategorydetails(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    
+    def get(self, request, pk):
+        category = get_object_or_404(FinanceCategories, pk=pk)
+        serializer = FinanceCategoryserializer(category)
+        return Response(serializer.data)
+ 
+
+     
+
+        
+             
+    
+    
+    
+class FinanceReportView(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request, pk):
+        category = get_object_or_404(FinanceReport, pk=pk)
+        serializer = FinanceReportserializer(category)
+        return Response(serializer.data)
+ 
+
+  
+  
+       
+    
+    def post(self,request):
+        reports = request.data.get("reports", [])  # Get list of reports
+        if not isinstance(reports, list):  
+            return Response({"error": "Invalid data format"}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = FinanceReportserializer(data=reports, many=True)  # Serialize multiple reports
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+     
+class FinanceReportdetails(APIView):
+     permission_classes = [IsAuthenticated]
+     def get(self,request,pk):
+         try:
+             Report = FinanceReport.objects.get(pk=pk)
+             
+         except FinanceReport.DoesNotExist():
+             return Response({'message':'Report does not exists'},status=status.HTTP_404_NOT_FOUND)   
+         
+         Repo = FinanceReportdetails(Report.data)
+            
+         return Response(Repo.data)      
+                   
+           
+
+
+class FinanceExpnumberView(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):  
+        categories = FinanceExpnumber.objects.all()
+        serializer = FinanceExpnumberSerializer(categories, many=True)
+        return Response(serializer.data)
+
+
+  
+    def post(self,request):
+        num = FinanceExpnumberSerializer(data=request.data)
+        if num.is_valid():
+           num.save()
+           return Response(num.data,status=status.HTTP_201_CREATED)
+        
+        return Response(num.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class FinanceExpnumberdetails(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    
+    def get(self, request, pk):
+        number = get_object_or_404(FinanceExpnumber, pk=pk)
+        serializer = FinanceExpnumberSerializer(number)
+        return Response(serializer.data)
+ 
+
+     
+
+        
+             
+    
+    
+    
+class FinanceExpenditureView(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request, pk):
+        number = get_object_or_404(FinanceExpenditure, pk=pk)
+        serial = FinanceReportserializer(number)
+        return Response(serial.data)
+ 
+
+  
+  
+       
+    
+    def post(self,request):
+        form = request.data.get("form", [])  # Get list of reports
+        if not isinstance(form, list):  
+            return Response({"error": "Invalid data format"}, status=status.HTTP_400_BAD_REQUEST)
+
+        serial = FinanceExpenditureserializer(data=form, many=True)  # Serialize multiple reports
+        if serial.is_valid():
+            serial.save()
+            return Response(serial.data, status=status.HTTP_201_CREATED)
+
+        return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+     
+class FinanceExpendituredetails(APIView):
+     permission_classes = [IsAuthenticated]
+     def get(self,request,pk):
+         try:
+             form = FinanceExpenditure.objects.get(pk=pk)
+             
+         except FinanceExpenditure.DoesNotExist():
+             return Response({'message':'Report does not exists'},status=status.HTTP_404_NOT_FOUND)   
+         
+         Report = FinanceExpendituredetails(form.data)
+            
+         return Response(Report.data)      
+                   
+           
 

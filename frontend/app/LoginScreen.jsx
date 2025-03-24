@@ -17,12 +17,13 @@ const Login = () => {
     setLoading(true)
 
     try{
-      const Response = await fetch ('http://192.168.92.150:8000/Login/',{
+      const Response = await fetch ('http://192.168.104.150:8000/Login/',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({username,password}),
       });
       if(Response.ok){
+       
         navigation.navigate('(tabs)', { screen: 'Home' });
 
       }else {

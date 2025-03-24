@@ -60,7 +60,7 @@ const ClientReport = () => {
 
       }
 
-      const response = await fetch('http://192.168.92.150:8000/Clients/', {
+      const response = await fetch('http://192.168.104.150:8000/Clients/', {
         method: 'POST',
         headers: { 'Content-Type': 'multipart/form-data'
 

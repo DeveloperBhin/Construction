@@ -44,6 +44,7 @@ const ClientReport = () => {
     setMessage(''); // Clear previous messages
 
     try {
+      
       const formData = new FormData();
       
       formData.append('Task',Task);
@@ -60,9 +61,10 @@ const ClientReport = () => {
 
       }
 
-      const response = await fetch('http://192.168.92.150:8000/Clients/', {
+      const response = await fetch('http://192.168.104.150:8000/Clients/', {
         method: 'POST',
-        headers: { 'Content-Type': 'multipart/form-data'
+        headers: { 'Content-Type': 'multipart/form-data',
+            "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba"
 
         },
         body: formData
@@ -79,7 +81,7 @@ const ClientReport = () => {
 
 
         
-        navigation.navigate('ClientsManage');
+        navigation.navigate('Client/ClientsManage');
       } else {
         // If the response is not OK, try to parse the error message
         const data = await response.json();

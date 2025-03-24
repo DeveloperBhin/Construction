@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,userToken } from 'react';
 import { View, TextInput, Button, Text, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 import { Link } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const CreateProjectScreen = () => {
   const [username,setUsername]= useState('')
@@ -33,9 +35,11 @@ const CreateProjectScreen = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://192.168.92.150:8000/LoginIntoExistingProject/', {
+      const response = await fetch('http://192.168.104.150:8000/LoginIntoExistingProject/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' ,
+          'Authorization': `Token ${userToken}`
+        },
         body: JSON.stringify({ username,password, TypeOfWork }),
       });
 
@@ -66,7 +70,7 @@ const CreateProjectScreen = () => {
             console.warn('Invalid TypeOfWork:', TypeOfWork);
             tabScreen = 'Client';
         }
-
+        
         navigation.navigate(tabScreen);
       } else {
         const data = await response.json();

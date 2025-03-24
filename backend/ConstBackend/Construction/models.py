@@ -34,6 +34,7 @@ WORKER_No= [
     
 ]
 
+
 class CustomerUser(AbstractUser):
    
     
@@ -68,4 +69,56 @@ class RegisterIntoExistingProject(models.Model):
     TypeOfWork = models.CharField(max_length=20, choices=WORKS_CHOICES, default='Clients')
 
     def __str__(self):
-        return self.name    
+        return self.name 
+    
+class FinanceCategories(models.Model):
+    name = models.CharField(max_length=255,blank=True,null=True) 
+    
+    def __str__(self):
+        return self.name
+       
+class FinanceReport(models.Model):    
+      name = models.CharField(max_length=255,blank=True,null=True) 
+    
+      budget=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      actual_expenses = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      variance=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      comments=models.CharField(max_length=255,blank=True,null=True)
+      Remark = models.CharField(max_length=255,blank=True,null=True)
+      
+      def save(self, *args, **kwargs):
+        """Automatically calculate variance before saving."""
+        if self.budget and self.actual_expenses:
+            self.variance = self.budget - self.actual_expenses
+            
+        super().save(*args, **kwargs)
+
+      def __str__(self):
+        return f"{self.category} - Budget: {self.budget}, Actual: {self.actual_expenses}"
+    
+class FinanceExpnumber(models.Model):
+    number = models.DecimalField(decimal_places=0,max_digits=3,blank=True,null=True) 
+    
+    def __str__(self):
+        return self.number
+    
+           
+class FinanceExpenditure(models.Model):    
+      number = models.DecimalField(decimal_places=0,max_digits=3,blank=True,null=True) 
+    
+      material=models.CharField(max_length=255,blank=True,null=True)
+      plannedQuantity = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      usedQuantity=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      remainingQuantity=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      comments=models.CharField(max_length=255,blank=True,null=True)
+      Remark = models.CharField(max_length=255,blank=True,null=True)
+      
+      def save(self, *args, **kwargs):
+        """Automatically calculate variance before saving."""
+        if self.plannedQuantity and self.usedQuantity:
+            self.remainingQuantity = self.plannedQuantity - self.usedQuantity
+            
+        super().save(*args, **kwargs)
+
+      def __str__(self):
+        return f"{self.number} - plannedQuantity: {self.plannedQuantity}, usedQuantity: {self.usedQuantity}"

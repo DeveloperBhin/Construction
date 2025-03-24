@@ -27,7 +27,7 @@ const Home = () => {
         <View style={styles.user}>
         <TouchableOpacity  >
        
-      <Link href='Client/Reports'  >
+      <Link href='Client/Report'  >
       <Image style={styles.client} source={require('../../../assets/images/public-relation.png')} />{'\n'}
       <Text style={styles. clienttext}>Reports</Text>
      

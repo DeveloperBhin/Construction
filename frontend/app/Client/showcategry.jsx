@@ -2,21 +2,27 @@ import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-nativ
 import React, { useEffect, useState } from 'react';
 
 const Client = () => {
-  const [clients, setClients] = useState([]);  // Ensure it's an array
+  const [category, setCategory] = useState([]);  // Ensure it's an array
   const [loading, setLoading] = useState(false);  // State to track loading status
 
   useEffect(() => {
-    fetchClients();
+    fetchCategory();
   }, []);
 
-  const fetchClients = async () => {
+  const fetchCategory = async () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://192.168.92.150:8000/Clients/');
-      const data = await response.json();
-      setClients(data);
-    } catch (error) {
+        const response = await fetch('http://192.168.104.150:8000/finance/', {
+          method: 'GET',
+          headers: { 
+            "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
+            'Content-Type': 'application/json' },
+   
+        });
+        const data = await response.json();
+        setCategory(data);
+      } catch (error) {
       console.error("Error fetching clients:", error);
     } finally {
       setLoading(false);
@@ -26,29 +32,11 @@ const Client = () => {
   const renderItem = ({ item }) => (
     <View style={styles.tableContainer}>
       <View style={styles.row}>
-      <Text style={styles.cellHeader}>Task:</Text> 
-      <Text style={styles.cell}>{item.Task}</Text>
+      <Text style={styles.cellHeader}>Name:</Text> 
+      <Text style={styles.cell}>{item.name}</Text>
       </View>
-      <View style={styles.row}>
-      <Text style={styles.cellHeader}>Status:</Text>
-      <Text style={styles.cell}>{item.Status}</Text>
-      </View>
-      <View style={styles.row}>
-      <Text style={styles.cellHeader}>Assignees: </Text>
-      <Text style={styles.cell}>{item.Assignees}</Text>
-      </View>
-      <View style={styles.row}>
-      <Text style={styles.cellHeader}>Due Date:</Text> 
-      <Text style={styles.cell}>{item.DueDate}</Text>
-      </View>
-      <View style={styles.row}>
-      <Text style={styles.cellHeader}>Tags:</Text>
-      <Text style={styles.cell}> {item.Tags}</Text>
-      </View>
-      <View style={styles.row}>
-      <Text style={styles.cellHeader}>File: </Text>
-      <Text style={styles.cell}>{item.File}</Text>
-      </View>
+     
+   
     </View>
   );
 
@@ -56,15 +44,15 @@ const Client = () => {
     <View style={styles.container}>
       {loading ? (
         <ActivityIndicator size="large" color="#9A340C" />
-      ) : clients.length > 0 ? (
+      ) : category.length > 0 ? (
         <FlatList
-          data={clients}
+          data={category}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           contentContainerStyle={styles.listContainer}
         />
       ) : (
-        <Text style={styles.noDataText}>No clients available</Text>
+        <Text style={styles.noDataText}>No category available</Text>
       )}
     </View>
   );

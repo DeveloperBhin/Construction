@@ -1,36 +1,34 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, TextInput, Button, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import {Link} from 'expo-router'
 import { Picker } from '@react-native-picker/picker';
 
+const ExpenditureNoScreen = () => {
+  const [number,setNumber]= useState('')
+ 
 
-const CreateprojectScreen = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
-
-  const [UName,setUName]=useState('');
-  const [Workers,setWorkers] =useState('0-50')
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
-  const handleCreateprojectScreen = async () => {
+  const handleNumber = async () => {
     setLoading(true); // Start loading
     setMessage(''); // Clear previous messages
 
     try {
-
-      const response = await fetch('http://192.168.104.150:8000/register/', {
+     
+      const response = await fetch('http://192.168.104.150:8000/FinanceExpnumber/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, UName, Workers}),
+        headers: { 
+           "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
+          'Content-Type': 'application/json' },
+        body:JSON.stringify({number}),
       });
 
       if (response.ok) {
+     
         // If the response is OK, navigate to the LoginScreen
-        navigation.navigate('LoginScreen');
+        navigation.navigate('Client/(tabs)', { screen: 'Home' });
       } else {
         // If the response is not OK, try to parse the error message
         const data = await response.json();
@@ -47,41 +45,24 @@ const CreateprojectScreen = () => {
   return (
 
     <View style={styles.container}>
-    
+     
       <View style={styles.container1}>
         <TextInput
           style={styles.TextInput}
-          placeholder="Project name"
-          value={username}
-          onChangeText={setUsername}
+          placeholder="Add Material number"
+          value={number}
+          onChangeText={setNumber}
         />
-         <TextInput
-          style={styles.TextInput}
-          placeholder="Project Code"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+      
+      
+
        
-       
-         <TextInput
-          style={styles.TextInput}
-          placeholder="Manager Name"
-          value={UName}
-          onChangeText={setUName}
-          
-        />
-    
-        <Picker selectedValue={Workers} placeholder='Number of Workers' style={styles.picker} onValueChange={(itemValue)=>setWorkers(itemValue)}>
-            <Picker.Item label='0-50' value='0-50'/>
-            <Picker.Item label='50-150' value='50-150'/>
-            <Picker.Item label='150-300' value='150-300'/>
-            <Picker.Item label='300-Above' value='300-Above'/>
-          </Picker>
+        
+
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
-          <Button title="Register" onPress={handleCreateprojectScreen} />
+          <Button title="Add" onPress={handleNumber} />
         )}
         {message ? <Text style={styles.message}>{message}</Text> : null}
       </View>
@@ -179,14 +160,14 @@ image:{
     marginLeft:90,
     
 
-  }, container: { flex: 1, backgroundColor: '#F7E4DE', padding: 16 },
+  },
+  container: { flex: 1, backgroundColor: '#F7E4DE', padding: 16 },
   inputContainer: { backgroundColor: '#fff', padding: 16, borderRadius: 8, marginBottom: 16 },
   input: { height: 40, borderBottomWidth: 1, marginBottom: 10, paddingHorizontal: 8 },
   picker: { width: '100%', backgroundColor: '#fff', marginVertical: 8 },
   fileButton: { backgroundColor: '#eee1f1', padding: 1, borderRadius: 8, marginVertical: 8,borderColor:'black', },
   message: { marginTop: 10, color: 'white', fontWeight: 'bold' },
 
-
 });
 
-export default CreateprojectScreen;
+export default ExpenditureNoScreen;

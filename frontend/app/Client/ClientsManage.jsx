@@ -13,7 +13,13 @@ const Client = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://192.168.92.150:8000/Clients/');
+      const response = await fetch('http://192.168.104.150:8000/Clients/',{
+        method: 'GET',
+        headers: {
+          "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",  
+          "Content-Type": "application/json"
+        }
+      });
       const data = await response.json();
       setClients(data);
     } catch (error) {
