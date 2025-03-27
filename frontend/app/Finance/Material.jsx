@@ -2,30 +2,35 @@ import { StyleSheet, Text, View, FlatList, ActivityIndicator,TouchableOpacity,Te
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Link } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons'; 
+
+
+
 
 const Report = () => {
-  const[material,setMaterial] = useState('');
-  const[plannedQuantity,setPlannedQuantity] = useState('');
-  const[usedQuantity,setUsedQuantity] = useState('');
-  const[remainingQuantity,setRemainingQuantity] =useState('');
-  const[Remark,setRemark] = useState('');
-  const[comments,setComments] = useState('');
-   const [message, setMessage] = useState('');
+  const[name,setName] = useState([]);
+  const[QuantityNeeded,setQuantityNeeded] = useState('');
+  const[pricePerQuantity,setpricePerQuantity] = useState('');
+  const[TotalAmount,setTotalAmount] =useState('');
+  const deleteTransaction = (id) => {
+    setName(name.filter(item => item.id !== id));
+  };
+  
+  const [message, setMessage] = useState('');
   
   const [loading, setLoading] = useState(false); 
   const navigation=useNavigation(); 
 
- const [number, setNumber] = useState([]);
  
    useEffect(() => {
-     fetchNumber();
+     fetchName();
    }, []);
  
-   const fetchNumber = async () => {
+   const fetchName = async () => {
      setLoading(true);
  
      try {
-         const response = await fetch('http://192.168.104.150:8000/FinanceExpnumber/', {
+         const response = await fetch('http://192.168.104.150:8000/FinanceMaterialname/', {
            method: 'GET',
            headers: { 
              "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
@@ -35,16 +40,15 @@ const Report = () => {
          const data = await response.json();
          const updatedData = data.map(item => ({
           ...item,
-          material: '',
-          plannedQuantity: '',
-          usedQuantity: '',
-          remainingQuantity:'',
+          
+          QuantityNeeded: '',
+          PricePerQuantity: '',
+          TotalAmount:'',
 
-          Remark: '',
-          comments:'',
+          
         }));
   
-         setNumber(updatedData);
+         setName(updatedData);
        } catch (error) {
        console.error("Error fetching number:", error);
      } finally {
@@ -52,26 +56,26 @@ const Report = () => {
      }
    };
    const updateRow = (index, field, value) => {
-    const updatedNumber = [...number];
-    updatedNumber[index][field] = value;
-    setNumber(updatedNumber);
+    const updatedName = [...name];
+    updatedName[index][field] = value;
+    setName(updatedName);
   };
  
      
  
    
-  const handleExpenditure = async () => {
-    const isEmpty = number.some(item => 
-      item.material.trim() === '' || 
-      item.plannedQuantity.trim() === '' || 
-      item.remainingQuantity.trim() === '' || 
-      item.usedQuantity.trim() === '' ||
+  const handleMaterial = async () => {
+    const isEmpty = name.some(item => 
+      
+      item.QuantityNeeded.trim() === '' || 
+      item.pricePerQuantity.trim() === '' || 
+      item.TotalAmount.trim() === '' 
      
-      item.Remark.trim() === ''
+      
       
   );
 
-  if (number.length === 0 || isEmpty) {
+  if (name.length === 0 || isEmpty) {
       setMessage("Please fill in all fields before submitting.");
       return;
   }
@@ -81,19 +85,19 @@ const Report = () => {
     // Prepare the data in the correct format
   
     try {
-        const response = await fetch('http://192.168.104.150:8000/FinanceExpenditure/', {
+        const response = await fetch('http://192.168.104.150:8000/FinanceMaterial/', {
             method: 'POST',
             headers: { 
                 "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({form:number,comments}),  
+            body: JSON.stringify({materialform:name}),  
         });
 
         if (response.ok) {
             const data = await response.json();
             setMessage("form submitted successfully!");
-            navigation.navigate('Client/(tabs)', { screen: 'Home' });
+            navigation.navigate('Finance/(tabs)', { screen: 'Home' });
         } else {
             const errorData = await response.json();
             setMessage(errorData.message || "An error occurred.");
@@ -108,62 +112,54 @@ const Report = () => {
   
  // Render Each Row Independently
 const renderItem = ({ item, index }) => (
-  <View style={styles.rowContainer}>
-    <Text style={styles.cell}>{item.number}
+  <View style={styles.inputContainer}>
+    <Text style={styles.cell}>{item.name}
     <TextInput
       style={{ height: 0, opacity: 0 }} // Makes it hidden
-      value={item.number} // Keeps the name stored in input
+      value={item.name} // Keeps the name stored in input
       editable={false} // Prevents user from editing
     />
 
     </Text>
     
 
-<TextInput
-      style={styles.input}
-      placeholder="Material"
-      value={item.material}
-      onChangeText={(text) => { setMaterial(text); updateRow(index, 'material', text);}}
-    />
+
     <TextInput
       style={styles.input}
-      placeholder="Planned.Q"
+      placeholder="QuantityNeeded"
       keyboardType="numeric"
-      value={item.plannedQuantity}
-      onChangeText={(text) =>{ setPlannedQuantity(text);  updateRow(index, 'plannedQuantity', text);}}
+      value={item.QuantityNeeded}
+      onChangeText={(text) =>{ setQuantityNeeded(text);  updateRow(index, 'QuantityNeeded', text);}}
     />
     <TextInput
       style={styles.input}
-      placeholder="Used.Q"
+      placeholder="Price per Quantity"
       keyboardType="numeric"
-      value={item.usedQuantity}
-      onChangeText={(text) =>{ setUsedQuantity(text);  updateRow(index, 'usedQuantity', text);}}
+      value={item.pricePerQuantity}
+      onChangeText={(text) =>{ setpricePerQuantity(text);  updateRow(index, 'pricePerQuantity', text);}}
     />
     <TextInput
       style={styles.input}
-      placeholder="Remaining.Q"
+      placeholder="Total Amount"
       keyboardType="numeric"
-      value={item.remainingQuantity}
-      onChangeText={(text) =>{ setRemainingQuantity(text);  updateRow(index, 'remainingQuantity', text);}}
+      value={item.TotalAmount}
+      onChangeText={(text) =>{ setTotalAmount(text);  updateRow(index, 'TotalAmount', text);}}
     />
-    <TextInput
-      style={styles.input}
-      placeholder="Remark"
-      value={item.Remark}
-      onChangeText={(text) => { setRemark(text); updateRow(index, 'Remark', text);}}
-    />
+  <TouchableOpacity onPress={() => deleteTransaction(item.id)} style={styles.deleteButton}>
+      <Ionicons name="trash" size={24} color="red" />
+    </TouchableOpacity>
   </View>
   
 );
   return (
     <View style={styles.container}>
-  <Text style={styles.repot}>Create Expenditure Report</Text>
+  <Text style={styles.repot}>Create Material budget</Text>
    
       {loading ? (
         <ActivityIndicator size="large" color="#9A340C" />
-      ) : number.length > 0 ? (
+      ) : name.length > 0 ? (
         <FlatList
-          data={number}
+          data={name}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           contentContainerStyle={styles.listContainer}
@@ -173,21 +169,16 @@ const renderItem = ({ item, index }) => (
       )}
 
       <View style={styles.container1}>
-      <TextInput
-      style={styles.com}
-      placeholder="Comments"
-      value={comments}
-      onChangeText={setComments}
-    />
+    
      
       <TouchableOpacity style={styles.button1}>
-        <Link href='Client/ExpenditureNo'>Add Material Space</Link>
+        <Link href='Finance/MaterialNo'>Add Material Space</Link>
       </TouchableOpacity>
 
         {loading ? (
           <ActivityIndicator size="large" color="#D84315" />
         ) : (
-          <Button title="Submit" onPress={handleExpenditure} />
+          <Button title="Submit" onPress={handleMaterial} />
         )}
 
         {message ? <Text style={styles.message}>{message}</Text> : null}
@@ -203,7 +194,7 @@ export default Report;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    
     padding: 10,
   },
   repot:{
@@ -294,47 +285,28 @@ const styles = StyleSheet.create({
     marginTop: 20,
     textAlign: 'center',
   },
-  container1: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 5,
-  },
-  TextInput: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-  },
+ 
   message: {
     marginTop: 10,
     color: 'red',
     textAlign: 'center',
   },
   
-    rowContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      borderBottomWidth: 1,
-      borderBottomColor: '#ddd',
-      padding: 10,
-    },
+   
     cell: {
       width: 80, // Adjust this width as per your requirement
       fontWeight: 'bold',
       marginRight: 5,
     },
     input: {
-      flex: 1,
-      borderWidth: 1,
+      
+      
       borderColor: '#ccc',
-      paddingHorizontal: 8,
-      paddingVertical: 5,
-      borderRadius: 5,
-      marginHorizontal: 5,
-      fontSize:6,
      
+      borderRadius: 5,
+      marginHorizontal:1,
+      fontSize:8,
+      textAlign:'center'
     },
     inputContainer: {
       alignItems: 'center',
@@ -358,5 +330,8 @@ const styles = StyleSheet.create({
       
 
     },
-  });
+    container: { flex: 1, backgroundColor: '#F7E4DE', padding: 16 },
+    inputContainer: { backgroundColor: '#fff', padding: 16, borderRadius: 8, marginBottom: 16 },
+    input: { height: 40, borderBottomWidth: 1, marginBottom: 10, paddingHorizontal: 8 },
+});
   

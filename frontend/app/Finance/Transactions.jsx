@@ -2,28 +2,32 @@ import { StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableOpacity, 
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Link } from 'expo-router';
+import {Picker} from '@react-native-picker/picker'
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons'; 
 
 
-const Budget = () => {
-  const [budgetno, setBudgetno] = useState([]);
+
+const Transactions = () => {
+  const [transname, setTransname] = useState([]);
+  const deleteTransaction = (id) => {
+    setTransname(transname.filter(item => item.id !== id));
+  };
   
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
-  const deleteTransaction = (id) => {
-    setBudgetno(budgetno.filter(item => item.id !== id));
-  };
+  const [datePickerIndex, setDatePickerIndex] = useState(null);
 
   useEffect(() => {
-    fetchBudgetno();
+    fetchTransname();
     
   }, []);
 
-  const fetchBudgetno = async () => {
+  const fetchTransname = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://192.168.104.150:8000/FinanceBudgetNo/', {
+      const response = await fetch('http://192.168.104.150:8000/FinanceTransactionNo/', {
         method: 'GET',
         headers: {
           "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
@@ -31,9 +35,9 @@ const Budget = () => {
         }
       });
       const data = await response.json();
-      setBudgetno(data);
+      setTransname(data);
     } catch (error) {
-      console.error("Error fetching budget No:", error);
+      console.error("Error fetching Transaction No:", error);
     } finally {
       setLoading(false);
     }
@@ -42,18 +46,18 @@ const Budget = () => {
  
 
   const updateRow = (index, field, value) => {
-    const updatedBudget = [...budgetno];
-    updatedBudget[index][field] = value;
-    setBudgetno(updatedBudget);
+    const updatedTrans = [...transname];
+    updatedTrans[index][field] = value;
+    setTransname(updatedTrans);
   };
 
-  const handleFinancebudget = async () => {
-    if (budgetno.length === 0 || budgetno.some(item => 
-      !item.BudgetName ||
-      !item.Totalbudget || 
-      !item.AmountSpent || 
-      !item.remainingbudget || 
-      !item.comments)) {
+  const handleFinanceTransaction = async () => {
+    if (transname.length === 0 || transname.some(item => 
+      !item.TransactionType ||
+      !item.Amount || 
+      !item.description || 
+      !item.date 
+      )) {
       setMessage("Please fill in all fields before submitting.");
       return;
     }
@@ -62,13 +66,13 @@ const Budget = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://192.168.104.150:8000/FinanceBudget/', {
+      const response = await fetch('http://192.168.104.150:8000/FinanceTransaction/', {
         method: 'POST',
         headers: {
           "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ budgetform: budgetno})
+        body: JSON.stringify({ Transform: transname})
       });
 
       if (response.ok) {
@@ -90,44 +94,52 @@ const Budget = () => {
     <View style={styles.inputContainer}>
       <Text style={styles.cell}>{item.number}</Text>
       
+    
+      <Picker selectedValue={item.TransactionType} placeholder="Transaction Type" style={styles.picker} onValueChange={(text) => updateRow(index, 'TransactionType', text)}>
+          <Picker.Item label='Income' value='Income'/>
+          <Picker.Item label='Expenses' value='Expenses'/>
+          
+        </Picker>
       <TextInput
         style={styles.input}
-        placeholder="Budget Name"
-        
-        value={item.BudgetName}
-        onChangeText={(text) => updateRow(index, 'BudgetName', text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Total Budget"
+        placeholder="Amount"
         keyboardType="numeric"
-        value={item.Totalbudget}
-        onChangeText={(text) => updateRow(index, 'Totalbudget', text)}
+        value={item.Amount}
+        onChangeText={(text) => updateRow(index, 'Amount', text)}
       />
        
       <TextInput
         style={styles.input}
-        placeholder="Amount Spent"
-        keyboardType="numeric"
-        value={item.AmountSpent}
-        onChangeText={(text) => updateRow(index, 'AmountSpent', text)}
+        placeholder="Description"
+        
+        value={item.description}
+        onChangeText={(text) => updateRow(index, 'description', text)}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Remaining Budget"
-        keyboardType="numeric"
-        value={item.remainingbudget}
-        onChangeText={(text) => updateRow(index, 'remainingbudget', text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Comments"
-        value={item.comments}
-        onChangeText={(text) => updateRow(index, 'comments', text)}
-      />
-      <TouchableOpacity onPress={() => deleteTransaction(item.id)} style={styles.deleteButton}>
+     
+     <TouchableOpacity onPress={() => setDatePickerIndex(index)}>
+        <TextInput
+          style={styles.input}
+          placeholder="Due Date"
+          value={item.date}
+          editable={false}
+        />
+      </TouchableOpacity>
+
+      {datePickerIndex === index && (
+        <DateTimePicker
+          value={item.date ? new Date(item.date) : new Date()}
+          mode="date"
+          display="default"
+          onChange={(event, selectedDate) => {
+            setDatePickerIndex(null);
+            if (selectedDate) updateRow(index, 'date', selectedDate.toISOString().split('T')[0]);
+          }}
+        />
+)}
+  <TouchableOpacity onPress={() => deleteTransaction(item.id)} style={styles.deleteButton}>
       <Ionicons name="trash" size={24} color="red" />
     </TouchableOpacity>
+     
     </View>
   );
 
@@ -136,30 +148,30 @@ const Budget = () => {
       <Text style={styles.repot}>Create A Budget</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#9A340C" />
-      ) : budgetno.length > 0 ? (
+      ) : transname.length > 0 ? (
         <FlatList
-          data={budgetno}
+          data={transname}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           contentContainerStyle={styles.listContainer}
         />
       ) : (
-        <Text style={styles.noDataText}>No budget available</Text>
+        <Text style={styles.noDataText}>No Transaction available</Text>
       )}
       <TouchableOpacity style={styles.button1}>
-        <Link href='Finance/Budgettype'>Add Budget</Link>
+        <Link href='Finance/TransactionNo'>Add Transaction</Link>
       </TouchableOpacity>
       {loading ? (
         <ActivityIndicator size="large" color="#D84315" />
       ) : (
-        <Button title="Submit" onPress={handleFinancebudget} />
+        <Button title="Submit" onPress={handleFinanceTransaction} />
       )}
       {message ? <Text style={styles.message}>{message}</Text> : null}
     </View>
   );
 };
 
-export default Budget;
+export default Transactions;
 
 const styles = StyleSheet.create({
   container: {

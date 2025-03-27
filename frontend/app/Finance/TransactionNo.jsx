@@ -3,32 +3,32 @@ import { View, TextInput, Button, Text, ActivityIndicator, StyleSheet } from 're
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 
-const CreateprojectScreen = () => {
-  const [name,setName]= useState('')
+const ExpenditureNoScreen = () => {
+  const [number,setNumber]= useState('')
  
 
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
-  const handleCategory = async () => {
+  const handleNumber = async () => {
     setLoading(true); // Start loading
     setMessage(''); // Clear previous messages
 
     try {
      
-      const response = await fetch('http://192.168.104.150:8000/finance/', {
+      const response = await fetch('http://192.168.104.150:8000/FinanceTransactionNo/', {
         method: 'POST',
         headers: { 
            "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
           'Content-Type': 'application/json' },
-        body:JSON.stringify({name}),
+        body:JSON.stringify({number}),
       });
 
       if (response.ok) {
      
         // If the response is OK, navigate to the LoginScreen
-        navigation.navigate('Client/(tabs)', { screen: 'Home' });
+        navigation.navigate('Finance/(tabs)', { screen: 'Home' });
       } else {
         // If the response is not OK, try to parse the error message
         const data = await response.json();
@@ -49,9 +49,9 @@ const CreateprojectScreen = () => {
       <View style={styles.container1}>
         <TextInput
           style={styles.TextInput}
-          placeholder="Add Category"
-          value={name}
-          onChangeText={setName}
+          placeholder="Add Transaction number"
+          value={number}
+          onChangeText={setNumber}
         />
       
       
@@ -62,7 +62,7 @@ const CreateprojectScreen = () => {
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
-          <Button title="Add" onPress={handleCategory} />
+          <Button title="Add" onPress={handleNumber} />
         )}
         {message ? <Text style={styles.message}>{message}</Text> : null}
       </View>
@@ -170,4 +170,4 @@ image:{
 
 });
 
-export default CreateprojectScreen;
+export default ExpenditureNoScreen;

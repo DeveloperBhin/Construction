@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
+from django.utils.timezone import now
 
 # Create your models here.
 STATUS_CHOICES= [
@@ -32,6 +33,10 @@ WORKER_No= [
     ('300-Above', '300-Above'),
     
     
+]
+TransactionTypeChoice = [
+    ('Income','Income'),
+    ('Expenses','Expenses'),
 ]
 
 
@@ -72,29 +77,30 @@ class RegisterIntoExistingProject(models.Model):
         return self.name 
     
 class FinanceCategories(models.Model):
-    name = models.CharField(max_length=255,blank=True,null=True) 
+    Reportname = models.CharField(max_length=255,blank=True,null=True) 
     
     def __str__(self):
         return self.name
        
 class FinanceReport(models.Model):    
-      name = models.CharField(max_length=255,blank=True,null=True) 
+      Reportname = models.CharField(max_length=255,blank=True,null=True) 
     
-      budget=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
-      actual_expenses = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      TotalBudget=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      Totalexpenses = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
       variance=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
-      comments=models.CharField(max_length=255,blank=True,null=True)
+      Notes=models.CharField(max_length=255,blank=True,null=True)
       Remark = models.CharField(max_length=255,blank=True,null=True)
+      generated_at=models.DateTimeField(default=now)
       
       def save(self, *args, **kwargs):
         """Automatically calculate variance before saving."""
-        if self.budget and self.actual_expenses:
-            self.variance = self.budget - self.actual_expenses
+        if self.TotalBudget and self.Totalexpenses:
+            self.variance = self.TotalBudget - self.Totalexpenses
             
         super().save(*args, **kwargs)
 
       def __str__(self):
-        return f"{self.category} - Budget: {self.budget}, Actual: {self.actual_expenses}"
+        return f"{self.category} - Budget: {self.TotalBudget}, Actual: {self.Totalexpenses}"
     
 class FinanceExpnumber(models.Model):
     number = models.DecimalField(decimal_places=0,max_digits=3,blank=True,null=True) 
@@ -122,3 +128,84 @@ class FinanceExpenditure(models.Model):
 
       def __str__(self):
         return f"{self.number} - plannedQuantity: {self.plannedQuantity}, usedQuantity: {self.usedQuantity}"
+    
+    
+class FinanceBudgetNo(models.Model):
+    number = models.DecimalField(decimal_places=0,max_digits=3,blank=True,null=True) 
+    
+    def __str__(self):
+        return self.number
+    
+           
+class FinanceBudget(models.Model):    
+      projectName = models.ForeignKey(User, on_delete=models.CASCADE,default=None)
+      BudgetName = models.CharField(max_length=255,default=None)
+      Totalbudget=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True) 
+      AmountSpent = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      remainingbudget=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      comments=models.CharField(max_length=255,blank=True,null=True)
+      generated_at=models.DateTimeField(default=now)
+      
+      
+      def save(self, *args, **kwargs):
+        """Automatically calculate variance before saving."""
+        if self.Totalbudget and self.AmountSpent:
+            self.remainingbudget = self.Totalbudget - self.AmountSpent
+            
+        super().save(*args, **kwargs)
+
+      def __str__(self):
+        return f"{self.number} - Tbudget: {self.Totalbudget}, Aspent: {self.AmountSpent}"
+    
+class FinanceTransactionsNo(models.Model):
+    number = models.DecimalField(decimal_places=0,max_digits=3,blank=True,null=True) 
+    
+    def __str__(self):
+        return self.number
+    
+           
+class FinanceTransaction(models.Model):    
+      projectName = models.ForeignKey(User, on_delete=models.CASCADE,default=None)
+      TransactionType = models.CharField(max_length=255,choices=TransactionTypeChoice,default='Income')
+      Amount = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      description=models.CharField(max_length=255,blank=True,null=True)
+      date=models.DateField(default=None,blank=True,null=True)
+      generated_at=models.DateTimeField(default=now)
+      
+      
+      
+
+      def __str__(self):
+        return self.name 
+    
+class FinanceMaterialname(models.Model):
+    name = models.CharField(max_length=255,blank=True,null=True) 
+    
+    def __str__(self):
+        return self.name
+    
+           
+class FinanceMaterial(models.Model):    
+      projectName = models.ForeignKey(User, on_delete=models.CASCADE,default=None)
+      QuantityNeeded = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      pricePerQuantity = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      TotalAmount=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      
+      generated_at=models.DateTimeField(default=now)
+      
+      
+      
+
+      def __str__(self):
+        return self.name 
+def save(self, *args, **kwargs):
+        """Automatically calculate variance before saving."""
+        if self.QuantityNeeded and self.pricePerQuantity:
+            self.TotalAmount = self.QuantityNeeded * self.pricePerQuantity
+            
+        super().save(*args, **kwargs)
+
+def __str__(self):
+        return f"{self.number} - Tbudget: {self.QuantityNeeded}, Aspent: {self.pricePerQuantity}"
+    
+ 

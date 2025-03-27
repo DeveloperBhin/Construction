@@ -33,5 +33,36 @@ class FinanceExpenditureserializer(serializers.ModelSerializer):
     class Meta:
         model = FinanceExpenditure
         fields = '__all__'
+  
+class FinanceBudgetNoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FinanceBudgetNo
+        fields = '__all__'
         
+class FinanceBudgetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FinanceBudget
+        fields = '__all__'
+        
+class FinanceTransactionNoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FinanceTransactionsNo
+        fields = '__all__'
+
+class FinanceTransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FinanceTransaction
+        fields = '__all__'        
+     
+class FinanceMaterialNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FinanceMaterialname
+        fields = '__all__'
+
+class FinanceMaterialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FinanceMaterial
+        fields = '__all__'        
+                     
+          
     

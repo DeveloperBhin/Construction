@@ -19,11 +19,6 @@ const Home = () => {
         <Text style={styles.Pcode}>Project Code:</Text>
       </View>
 
-      <View style={styles.Overlay}>
-      <Text style={styles.Pname}>Name:</Text>
-      <Text style={styles.Pcode}>+Add Members:</Text>
-      </View>
-      
 
       </View>
       <View style={styles.Manage}>
@@ -31,7 +26,7 @@ const Home = () => {
         <View style={styles.user}>
         <TouchableOpacity  >
        
-      <Link href='Finance/Reports'  >
+      <Link href='Finance/Report'  >
       <Image style={styles.client} source={require('../../../assets/images/public-relation.png')} />{'\n'}
       <Text style={styles. clienttext}>Report</Text>
      
@@ -42,9 +37,9 @@ const Home = () => {
       </TouchableOpacity>
       <TouchableOpacity  >
        
-       <Link href='Finance/Expenditure'  >
+       <Link href='Finance/Material'  >
        <Image style={styles.Finance} source={require('../../../assets/images/profit.png')} />{'\n'}
-       <Text style={styles. clienttext}>Expenditure</Text>
+       <Text style={styles. clienttext}>material Usage</Text>
    
       </Link>
        </TouchableOpacity>
@@ -54,9 +49,9 @@ const Home = () => {
       <View style={styles.user}>
         <TouchableOpacity  >
        
-      <Link href='Finance/Payments'  >
+      <Link href='Finance/Transactions'  >
       <Image style={styles.client} source={require('../../../assets/images/engineer.png')} />{'\n'}
-      <Text style={styles. clienttext}>Payments</Text>
+      <Text style={styles. clienttext}>Transactions</Text>
   
      </Link>
       </TouchableOpacity>
@@ -72,14 +67,7 @@ const Home = () => {
      
       </View>
       <View style={styles.user}>
-        <TouchableOpacity  >
        
-      <Link href='Finance/Supplier'  >
-      <Image style={styles.client} source={require('../../../assets/images/wholesale.png')} />{'\n'}
-      <Text style={styles. clienttext}>Supplier</Text>
-
-     </Link>
-      </TouchableOpacity>
      
       
      

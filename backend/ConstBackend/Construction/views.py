@@ -10,6 +10,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.authentication import TokenAuthentication,SessionAuthentication
+from django.utils.timezone import now
      
 
 
@@ -307,6 +308,233 @@ class FinanceExpendituredetails(APIView):
              return Response({'message':'Report does not exists'},status=status.HTTP_404_NOT_FOUND)   
          
          Report = FinanceExpendituredetails(form.data)
+            
+         return Response(Report.data)      
+                   
+           
+
+class FinanceBudgetNoView(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):  
+        Budget = FinanceBudgetNo.objects.all()
+        Budgetserializer = FinanceBudgetNoSerializer(Budget, many=True)
+        return Response(Budgetserializer.data)
+
+
+  
+    def post(self,request):
+        bug = FinanceBudgetNoSerializer(data=request.data)
+        if bug.is_valid():
+           bug.save()
+           return Response(bug.data,status=status.HTTP_201_CREATED)
+        
+        return Response(bug.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class FinanceBudgetNodetails(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    
+    def get(self, request, pk):
+        number = get_object_or_404(FinanceBudgetNo, pk=pk)
+        serializer = FinanceBudgetNoSerializer(number)
+        return Response(serializer.data)
+ 
+
+     
+
+        
+             
+    
+    
+    
+class FinanceBudgetView(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request,pk):
+        number = get_object_or_404(FinanceBudget,pk=pk)
+        serial = FinanceBudgetSerializer(number)
+        return Response(serial.data)
+ 
+    def post(self,request):
+        budgetform = request.data.get("budgetform", [])  # Get list of reports
+        if not isinstance(budgetform, list):  
+            return Response({"error": "Invalid data format"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        projectName = get_object_or_404(User)
+
+        bugdetserial = FinanceBudgetSerializer(data=budgetform, many=True)  # Serialize multiple reports
+        if bugdetserial.is_valid():
+            bugdetserial.save(projectName=request.user)
+            return Response(bugdetserial.data, status=status.HTTP_201_CREATED)
+
+        return Response(bugdetserial.errors, status=status.HTTP_400_BAD_REQUEST)
+     
+class FinanceBudgetdetails(APIView):
+     permission_classes = [IsAuthenticated]
+     def get(self,request,pk):
+         try:
+             form = FinanceBudget.objects.get(pk=pk)
+             
+         except FinanceBudget.DoesNotExist():
+             return Response({'message':'Report does not exists'},status=status.HTTP_404_NOT_FOUND)   
+         
+         Report = FinanceBudgetdetails(form.data)
+            
+         return Response(Report.data)      
+                   
+           
+class FinanceTransactionNoView(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):  
+        Transaction = FinanceTransactionsNo.objects.all()
+        Transactionserializer = FinanceTransactionNoSerializer(Transaction, many=True)
+        return Response(Transactionserializer.data)
+
+
+  
+    def post(self,request):
+        Trans = FinanceTransactionNoSerializer(data=request.data)
+        if Trans.is_valid():
+           Trans.save()
+           return Response(Trans.data,status=status.HTTP_201_CREATED)
+        
+        return Response(Trans.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class FinanceTransactionNodetails(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    
+    def get(self, request, pk):
+        number = get_object_or_404(FinanceTransactionsNo, pk=pk)
+        serializer = FinanceTransactionNoSerializer(number)
+        return Response(serializer.data)
+ 
+
+     
+
+        
+             
+    
+    
+    
+class FinanceTransactionView(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request,pk):
+        number = get_object_or_404(FinanceTransaction,pk=pk)
+        serial = FinanceTransactionSerializer(number)
+        return Response(serial.data)
+ 
+    def post(self,request):
+        Transform = request.data.get("Transform", [])  # Get list of reports
+        if not isinstance(Transform, list):  
+            return Response({"error": "Invalid data format"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        projectName = get_object_or_404(User)
+        
+
+        Transserial = FinanceTransactionSerializer(data=Transform, many=True)  
+        if Transserial.is_valid():
+            Transserial.save(projectName=request.user)
+            return Response(Transserial.data, status=status.HTTP_201_CREATED)
+
+        return Response(Transserial.errors, status=status.HTTP_400_BAD_REQUEST)
+     
+class FinanceTransactiondetails(APIView):
+     permission_classes = [IsAuthenticated]
+     def get(self,request,pk):
+         try:
+             form = FinanceTransaction.objects.get(pk=pk)
+             
+         except FinanceTransaction.DoesNotExist():
+             return Response({'message':'Report does not exists'},status=status.HTTP_404_NOT_FOUND)   
+         
+         Report = FinanceTransactiondetails(form.data)
+            
+         return Response(Report.data)      
+                   
+           
+
+         
+class FinanceMaterialNameView(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):  
+        material = FinanceMaterialname.objects.all()
+        materialserializer = FinanceMaterialNameSerializer(material, many=True)
+        return Response(materialserializer.data)
+
+
+  
+    def post(self,request):
+        mater = FinanceMaterialNameSerializer(data=request.data)
+        if mater.is_valid():
+           mater.save()
+           return Response(mater.data,status=status.HTTP_201_CREATED)
+        
+        return Response(mater.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class FinanceMaterialNamedetails(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    
+    def get(self, request, pk):
+        number = get_object_or_404(FinanceMaterialname, pk=pk)
+        serializer = FinanceMaterialNameSerializer(number)
+        return Response(serializer.data)
+ 
+
+     
+
+        
+             
+    
+    
+    
+class FinanceMaterialView(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request,pk):
+        number = get_object_or_404(FinanceMaterial,pk=pk)
+        serial = FinanceMaterialSerializer(number)
+        return Response(serial.data)
+ 
+    def post(self,request):
+        materialform = request.data.get("materialform", [])  # Get list of reports
+        if not isinstance(materialform, list):  
+            return Response({"error": "Invalid data format"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        projectName = get_object_or_404(User)
+        
+
+        materserial = FinanceMaterialSerializer(data=materialform, many=True)  
+        if materserial.is_valid():
+            materserial.save(projectName=request.user)
+            return Response(materserial.data, status=status.HTTP_201_CREATED)
+
+        return Response(materserial.errors, status=status.HTTP_400_BAD_REQUEST)
+     
+class FinanceMaterialdetails(APIView):
+     permission_classes = [IsAuthenticated]
+     def get(self,request,pk):
+         try:
+             form = FinanceMaterial.objects.get(pk=pk)
+             
+         except FinanceMaterial.DoesNotExist():
+             return Response({'message':'Report does not exists'},status=status.HTTP_404_NOT_FOUND)   
+         
+         Report = FinanceMaterialdetails(form.data)
             
          return Response(Report.data)      
                    

@@ -52,7 +52,7 @@ const CreateProjectScreen = () => {
             tabScreen = 'Client/(tabs)';
             break;
           case 'Finance':
-            tabScreen = 'Finance';
+            tabScreen = 'Finance/(tabs)';
             break;
           case 'Worker':
             tabScreen = 'worker/(tabs)';
