@@ -35,7 +35,7 @@ const CreateProjectScreen = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://192.168.104.150:8000/LoginIntoExistingProject/', {
+      const response = await fetch('http://192.168.219.150:8000/LoginIntoExistingProject/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' ,
           'Authorization': `Token ${userToken}`
@@ -64,7 +64,7 @@ const CreateProjectScreen = () => {
             tabScreen = 'supplier/(tabs)';
             break;
           case 'Site Supervisor':
-            tabScreen = 'SiteSupervisor';
+            tabScreen = 'sitesupevisor/(tabs)';
             break;
           default:
             console.warn('Invalid TypeOfWork:', TypeOfWork);

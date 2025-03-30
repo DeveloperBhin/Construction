@@ -38,9 +38,9 @@ const Home = () => {
       </TouchableOpacity>
       <TouchableOpacity  >
        
-       <Link href='sitesupevisor/workers'  >
+       <Link href='sitesupevisor/Materials'  >
        <Image style={styles.Finance} source={require('../../../assets/images/profit.png')} />{'\n'}
-       <Text style={styles. clienttext}>Worker</Text>
+       <Text style={styles. clienttext}>Requests</Text>
    
       </Link>
        </TouchableOpacity>

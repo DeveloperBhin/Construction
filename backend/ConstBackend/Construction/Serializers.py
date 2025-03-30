@@ -62,7 +62,30 @@ class FinanceMaterialNameSerializer(serializers.ModelSerializer):
 class FinanceMaterialSerializer(serializers.ModelSerializer):
     class Meta:
         model = FinanceMaterial
-        fields = '__all__'        
+        fields = '__all__'     
+       
+class workerAtendanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkerAttendance
+        fields = '__all__'           
                      
+class workerMaterialUsageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkerMaterialUsage
+        fields = '__all__'           
+                     
+  
+class QualityAssuranceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QualityAssurance
+        fields = '__all__'           
+                     
+    
+class SupplierReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SupplierReport
+        fields = '__all__'           
+                     
+    
           
     

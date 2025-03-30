@@ -28,5 +28,14 @@ urlpatterns = [
     path('FinanceMaterialname/<int:pk>/',FinanceMaterialNamedetails.as_view(),name='FinanceMaterialname'),
     path('FinanceMaterial/',FinanceMaterialView.as_view(),name='FinanceMaterial'),
     path('FinanceMaterial/<int:pk>/',FinanceMaterialdetails.as_view(),name='FinanceMaterial'),
+    path('WorkerAttendance/',WorkerAttendanceView.as_view(),name='WorkerAttendance'),
+    path('WorkerAttendance/<int:pk>/',WorkerAttendancedetails.as_view(),name='WorkerAttendance'),
+    path('WorkerMaterialUsage/',WorkerMaterialUsageView.as_view(),name='WorkerMaterialUsage'),
+    path('WorkerMaterialUsage/<int:pk>/',WorkerMaterialUsagedetails.as_view(),name='WorkerMaterialUsage'),
+    path('QualityAssurance/',QualityAssuranceView.as_view(),name='QualityAssurance'),
+    path('QualityAssurance/<int:pk>/',QualityAssurancedetails.as_view(),name='QualityAssurance'),
+    path('SupplierReport/',SupplierReportView.as_view(),name='SupplierReport'),
+    path('SupplierReport/<int:pk>/',SupplierReportdetails.as_view(),name='SupplierReport'),
+
 
 ]

@@ -21,7 +21,7 @@ const CreateprojectScreen = () => {
 
     try {
      
-      const response = await fetch('http://192.168.104.150:8000/register-into-existing-project/', {
+      const response = await fetch('http://192.168.219.150:8000/register-into-existing-project/', {
         method: 'POST',
         headers: { 
          

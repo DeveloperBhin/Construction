@@ -104,6 +104,13 @@ class Clientdetails(APIView):
 
 
 class RegisterIntoExistingProjectView(APIView):
+    
+    
+    def get(self, request):
+        clients = RegisterIntoExistingProject.objects.all()
+        serializer = RegisterIntoExistingProjectSerializer(clients, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
@@ -260,8 +267,8 @@ class FinanceExpnumberdetails(APIView):
     permission_classes = [IsAuthenticated]
 
     
-    def get(self, request, pk):
-        number = get_object_or_404(FinanceExpnumber, pk=pk)
+    def get(self, request):
+        number = get_object_or_404(FinanceExpnumber)
         serializer = FinanceExpnumberSerializer(number)
         return Response(serializer.data)
  
@@ -276,8 +283,8 @@ class FinanceExpnumberdetails(APIView):
 class FinanceExpenditureView(APIView):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
-    def get(self, request, pk):
-        number = get_object_or_404(FinanceExpenditure, pk=pk)
+    def get(self, request):
+        number = FinanceExpenditure.objects.all()
         serial = FinanceReportserializer(number)
         return Response(serial.data)
  
@@ -338,11 +345,12 @@ class FinanceBudgetNodetails(APIView):
     permission_classes = [IsAuthenticated]
 
     
-    def get(self, request, pk):
-        number = get_object_or_404(FinanceBudgetNo, pk=pk)
-        serializer = FinanceBudgetNoSerializer(number)
-        return Response(serializer.data)
- 
+    def get(self, request):  
+        Budget = FinanceBudgetNo.objects.all()
+        Budgetserializer = FinanceBudgetNoSerializer(Budget, many=True)
+        return Response(Budgetserializer.data)
+
+
 
      
 
@@ -375,16 +383,12 @@ class FinanceBudgetView(APIView):
      
 class FinanceBudgetdetails(APIView):
      permission_classes = [IsAuthenticated]
-     def get(self,request,pk):
-         try:
-             form = FinanceBudget.objects.get(pk=pk)
-             
-         except FinanceBudget.DoesNotExist():
-             return Response({'message':'Report does not exists'},status=status.HTTP_404_NOT_FOUND)   
-         
-         Report = FinanceBudgetdetails(form.data)
-            
-         return Response(Report.data)      
+     def get(self, request):  
+        categories = FinanceCategories.objects.all()
+        serializer = FinanceCategoryserializer(categories, many=True)
+        return Response(serializer.data)
+
+     
                    
            
 class FinanceTransactionNoView(APIView):
@@ -505,8 +509,8 @@ class FinanceMaterialNamedetails(APIView):
 class FinanceMaterialView(APIView):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
-    def get(self, request,pk):
-        number = get_object_or_404(FinanceMaterial,pk=pk)
+    def get(self, request):
+        number = get_object_or_404(FinanceMaterial,)
         serial = FinanceMaterialSerializer(number)
         return Response(serial.data)
  
@@ -536,7 +540,141 @@ class FinanceMaterialdetails(APIView):
          
          Report = FinanceMaterialdetails(form.data)
             
-         return Response(Report.data)      
-                   
-           
+         return Response(Report.data)     
+      
+       
+class WorkerAttendanceView(APIView):
 
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        worker = WorkerAttendance.objects.all()
+        serializer = workerAtendanceSerializer(worker, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    
+    def post(self,request):
+        
+
+        workerserializer = workerAtendanceSerializer(data=request.data)
+        project = get_object_or_404(User)
+
+        if workerserializer.is_valid():
+            workerserializer.save(project=request.user)
+            return Response ( workerserializer.data, status=status.HTTP_201_CREATED)
+        print("Validation Errors:", workerserializer.errors)
+        
+        return Response(workerserializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class WorkerAttendancedetails(APIView):
+    def get(self, request, pk):
+        worker = get_object_or_404(WorkerAttendance, pk=pk)
+        serializer = workerAtendanceSerializer(worker)
+        return Response(serializer.data)
+    
+   
+class WorkerMaterialUsageView(APIView):
+
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        material = WorkerMaterialUsage.objects.all()
+        serializer = workerMaterialUsageSerializer(material, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    
+    def post(self,request):
+        
+
+        materialserializer = workerMaterialUsageSerializer(data=request.data)
+        worker = WorkerAttendance.objects.filter(id=request.user.id).first()
+
+
+        if materialserializer.is_valid():
+            materialserializer.save(worker=worker)
+            return Response ( materialserializer.data, status=status.HTTP_201_CREATED)
+        print("Validation Errors:", materialserializer.errors)
+        
+        return Response(materialserializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class WorkerMaterialUsagedetails(APIView):
+    def get(self, request, pk):
+        worker = get_object_or_404(WorkerMaterialUsage, pk=pk)
+        serializer = workerMaterialUsageSerializer(worker)
+        return Response(serializer.data)
+    
+    
+class QualityAssuranceView(APIView):
+
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        quality = QualityAssurance.objects.all()
+        serializer = QualityAssuranceSerializer(quality, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    
+    def post(self,request):
+        
+        Assuranceform = request.data.get("Assuranceform",[])
+        if not isinstance(Assuranceform, list):
+            return Response({"error":"Invalid data format"})
+        qualityserializer = QualityAssuranceSerializer(data=Assuranceform)
+        worker = RegisterIntoExistingProject.objects.filter(id=request.user).first()
+
+        material= FinanceMaterialname.objects.filter(user=request.user.id).first()
+
+
+        if qualityserializer.is_valid():
+            qualityserializer.save(worker=worker.id,material=material.id)
+            return Response ( qualityserializer.data, status=status.HTTP_201_CREATED)
+        print("Validation Errors:", qualityserializer.errors)
+        
+        return Response(qualityserializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class QualityAssurancedetails(APIView):
+    def get(self, request, pk):
+        quality = get_object_or_404(QualityAssurance, pk=pk)
+        serializer = QualityAssuranceSerializer(quality)
+        return Response(serializer.data)
+    
+
+
+  
+class SupplierReportView(APIView):
+
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+   
+    
+    def post(self,request):
+         supplierform = request.data.get("supplierform",[])
+         if not isinstance(supplierform, list):
+            return Response({"error":"Invalid data format"})
+        
+
+         supplierserializer = SupplierReportSerializer(data=supplierform)
+         print("serializer error:")
+        
+         if supplierserializer.is_valid():
+            supplierserializer.save()
+            return Response ( supplierserializer.data, status=status.HTTP_201_CREATED)
+        
+         return Response(supplierserializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class SupplierReportdetails(APIView):
+    def get(self, request, pk):
+        worker = get_object_or_404(SupplierReport, pk=pk)
+        serializer = SupplierReportSerializer(worker)
+        return Response(serializer.data)
+        
+    
+
+    
+
+
+     

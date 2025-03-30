@@ -28,7 +28,7 @@ const Home = () => {
       <View style={styles.user}>
         <TouchableOpacity  >
        
-      <Link href='Finance/Budgets'  >
+      <Link href='worker/LogInWork'  >
       <Image style={styles.client} source={require('../../../assets/images/engineer.png')} />{'\n'}
       <Text style={styles. clienttext}>Log In Work</Text>
   
@@ -36,7 +36,7 @@ const Home = () => {
       </TouchableOpacity>
       <TouchableOpacity  >
        
-       <Link href='Finance/Payments'  >
+       <Link href='worker/MaterialUsage'  >
        <Image style={styles.Finance} source={require('../../../assets/images/quality-assurance.png')} />{'\n'}
        <Text style={styles. clienttext}>Material Usage</Text>
    

@@ -11,7 +11,7 @@ export default function RootLayout() {
   <Stack.Screen name="Finance/(tabs)"/>;
   <Stack.Screen name="Manager/(tabs)"/>;
   <Stack.Screen name="QA/(tabs)"/>;
-  <Stack.Screen name="sitesupervisor/(tabs)"/>;
+  <Stack.Screen name="sitesupevisor/(tabs)"/>;
   <Stack.Screen name="supplier/(tabs)"/>;
   <Stack.Screen name="worker/(tabs)"/>;
   

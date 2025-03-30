@@ -30,7 +30,7 @@ const Report = () => {
      setLoading(true);
  
      try {
-         const response = await fetch('http://192.168.104.150:8000/finance/', {
+         const response = await fetch('http://192.168.219.150:8000/finance/', {
            method: 'GET',
            headers: { 
              "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
@@ -83,7 +83,7 @@ const Report = () => {
     // Prepare the data in the correct format
   
     try {
-        const response = await fetch('http://192.168.104.150:8000/financereport/', {
+        const response = await fetch('http://192.168.219.150:8000/financereport/', {
             method: 'POST',
             headers: { 
                 "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",

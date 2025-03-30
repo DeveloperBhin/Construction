@@ -1,161 +1,183 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, Button, Text, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as DocumentPicker from 'expo-document-picker';
-import {Picker} from '@react-native-picker/picker'
+import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-
-const ClientReport = () => {
-
-  const [Task, setTask] = useState('');
-  const [Status, setStatus] = useState('Not Started ');
-  const [Assignees, setAssignees] = useState('');
-  const[DueDate,setDueDate] = useState('');
-  const[Tags,setTags] = useState('Medium priority');
-  const[File,setFile] =useState('')
+const workerAtendance = () => {
+  const [status, setStatus] = useState('Present');
+  const [check_in, setCheck_in] = useState('');
+  const [date, setDate] = useState('');
+  const [check_out, setCheck_out] = useState('');
+  const [PerformedWork, setPerformedWork] = useState('');
+  const [workinghrs, setWorkinghrs] = useState('');
   const [loading, setLoading] = useState(false);
-  const[message,setMessage] = useState('')
+  const [message, setMessage] = useState('');
   const navigation = useNavigation();
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimeInPicker, setShowTimeInPicker] = useState(false);
+  const [showTimeOutPicker, setShowTimeOutPicker] = useState(false);
 
-
-  const handlePickFile= async() =>{
-    try{
-      const result = await DocumentPicker.getDocumentAsync({type:'*/*'} );
-
-      console.log('File Picked :',result);
-    
-     if (result.type==='success'){
-      setFile(result);
-    }
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      setFile(result.assets[0]); 
-    }
-  }
-  catch(error){
-    console.error('File selection error',error);
-
-  }
-};
-
-  const handleClientReport = async () => {
-    setLoading(true); // Start loading
-    setMessage(''); // Clear previous messages
+  const handleWorkerLogin = async () => {
+    setLoading(true);
+    setMessage('');
 
     try {
       const formData = new FormData();
-      
-      formData.append('Task',Task);
-      formData.append('Status',Status);
-      formData.append('Assignees',Assignees);
-      formData.append('DueDate',DueDate);
-      formData.append('Tags',Tags);
-      if (File){
-        formData.append('File',{
-          uri:File.uri,
-          name:File.name,
-          type:File.mimeType||'application/octet-stream',
-        });
+      formData.append('status', status);
+      formData.append('date', date);
+      formData.append('check_in', check_in);
+      formData.append('check_out', check_out);
+      formData.append('workinghrs',workinghrs)
+      formData.append('PerfomedWork', PerformedWork);
 
-      }
-
-      const response = await fetch('http://192.168.1.150:8000/Clients/', {
+      const response = await fetch('http://192.168.219.150:8000/WorkerAttendance/', {
         method: 'POST',
-        headers: { 'Content-Type': 'multipart/form-data'
-
+        headers: {
+          "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
+          'Content-Type': 'multipart/form-data',
         },
-        body: formData
+        body: formData,
       });
 
       if (response.ok) {
-        setMessage('Report generated succesfully');
-        setTask('');
-        setStatus('Not started');
-        setAssignees('');
-        setDueDate('Medium priority');
-        setTags('');
-        setFile();
-
-
-        
-        navigation.navigate('ClientsManage');
+        setMessage('Report generated successfully');
+        setStatus('Present');
+        setCheck_in('');
+        setCheck_out('');
+        setDate('');
+        setPerformedWork('');
+        setWorkinghrs('');
+        navigation.navigate('worker/(tabs)', { screen: 'Home' });
       } else {
-        // If the response is not OK, try to parse the error message
         const data = await response.json();
-        setMessage(data.message || 'An error occurred.'); // Fallback message
+        setMessage(data.message || 'An error occurred.');
       }
     } catch (error) {
       console.error('Error during fetch:', error);
-      setMessage('An error occurred while trying to generate'); // User-friendly message
+      setMessage('An error occurred while trying to generate');
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
+  // Calculate the difference between check-in and check-out times
+  useEffect(() => {
+    if (check_in && check_out) {
+      const checkInTime = new Date(`1970-01-01T${check_in}:00Z`);
+      const checkOutTime = new Date(`1970-01-01T${check_out}:00Z`);
+      const diffInMs = checkOutTime - checkInTime;
+
+      if (diffInMs > 0) {
+        const hours = Math.floor(diffInMs / 1000 / 60 / 60);
+        const minutes = Math.floor((diffInMs % (1000 * 60 * 60)) / (1000 * 60));
+        setWorkinghrs(`${hours}:${minutes < 10 ? '0' + minutes : minutes}`);
+      }
+    }
+  }, [check_in, check_out]);
   return (
     <View style={styles.container}>
-      {/* Input Form */}
       <View style={styles.inputContainer}>
-        <TextInput style={styles.input} placeholder="Task" value={Task} onChangeText={setTask} />
-        <Picker selectedValue={Status} placeholder="Status" style={styles.picker} onValueChange={(itemValue)=>setStatus(itemValue)}>
-          <Picker.Item label='Not Started' value='Not Started'/>
-          <Picker.Item label='In Process' value='In Process'/>
-          <Picker.Item label='Completed' value='Completed'/>
-          <Picker.Item label='Closed' value='Closed'/>
+        <Text>Worker Attendance</Text>
+        <Picker selectedValue={status} style={styles.picker} onValueChange={(itemValue) => setStatus(itemValue)}>
+          <Picker.Item label='Present' value='Present' />
+          <Picker.Item label='Absent' value='Absent' />
+          <Picker.Item label='Late' value='Late' />
+          <Picker.Item label='Sick' value='Sick' />
+          <Picker.Item label='On Leave' value='On Leave' />
         </Picker>
-        
-        <TextInput style={styles.input} placeholder="Assignees" value={Assignees} onChangeText={setAssignees} />
+
         <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-  <TextInput style={styles.input} placeholder="Due Date" value={DueDate} editable={false} />
+          <TextInput style={styles.input} placeholder="Due Date" value={date} editable={false} />
+        </TouchableOpacity>
+        {showDatePicker && (
+          <DateTimePicker
+            value={new Date()}
+            mode="date"
+            display="default"
+            onChange={(event, selectedDate) => {
+              setShowDatePicker(false);
+              if (selectedDate) setDate(selectedDate.toISOString().split('T')[0]);
+            }}
+          />
+        )}
+
+<TouchableOpacity onPress={() => setShowTimeInPicker(true)}>
+  <TextInput
+    style={styles.input}
+    placeholder="Start Time"
+    value={check_in}  // Display the formatted time
+    editable={false}   // Prevent manual editing
+  />
 </TouchableOpacity>
-{showDatePicker && (
+
+{showTimeInPicker && (
   <DateTimePicker
-    value={new Date()}
-    mode="date"
+    value={new Date()}  // Default to current time
+    mode="time"
     display="default"
-    onChange={(event, selectedDate) => {
-      setShowDatePicker(false);
-      if (selectedDate) setDueDate(selectedDate.toISOString().split('T')[0]);
+    onChange={(event, selectedTime) => {
+      setShowTimeInPicker(false); // Hide the picker once the time is selected
+      if (selectedTime) {
+        // Format the time as HH:mm (remove seconds and milliseconds)
+        const formattedTime = selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        setCheck_in(formattedTime); // Update the state with the formatted time
+      }
     }}
   />
 )}
 
-<Picker selectedValue={Tags} placeholder="Tags" style={styles.picker} onValueChange={(itemValue)=>setTags(itemValue)}>
-          <Picker.Item label='High priority' value='High priority'/>
-          <Picker.Item label='Medium priority' value='Medium priority'/>
-          <Picker.Item label='Low priority' value='Low priority'/>
-        
-        </Picker>
-        <TouchableOpacity style={styles.fileButton} onPress={handlePickFile}>
-          <Text style={styles.fileButton}>Pick a File</Text>
-        </TouchableOpacity>
-        {File && File.name ? <Text style={styles.filename}>selected:{File.name}</Text> :null}
-      
-    
 
-      
-      {loading ? (
-        <ActivityIndicator size="large" color="#9A340C" />
-      ):
-      (
-     <Button title={'Add Report'} onPress={handleClientReport}/> ) }
-     
-        { message ? <Text style={styles.message}>{message}</Text>:null}
-        </View>
-  
+<TouchableOpacity onPress={() => setShowTimeOutPicker(true)}>
+  <TextInput
+    style={styles.input}
+    placeholder="Start Time"
+    value={check_out}  // Display the formatted time
+    editable={false}   // Prevent manual editing
+  />
+</TouchableOpacity>
+
+{showTimeOutPicker && (
+  <DateTimePicker
+    value={new Date()}  // Default to current time
+    mode="time"
+    display="default"
+    onChange={(event, selectedTime) => {
+      setShowTimeOutPicker(false); // Hide the picker once the time is selected
+      if (selectedTime) {
+        // Format the time as HH:mm (remove seconds and milliseconds)
+        const formattedTime = selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        setCheck_out(formattedTime); // Update the state with the formatted time
+      }
+    }}
+  />
+)}
+
+
+
+        <TextInput
+          style={styles.input}
+          placeholder="Performed Task"
+          value={PerformedWork}
+          onChangeText={setPerformedWork}
+        />
+
+        <Button title="Submit" onPress={handleWorkerLogin} />
+
+        {loading && <ActivityIndicator size="large" color="#9A340C" />}
+        {message && <Text style={styles.message}>{message}</Text>}
+      </View>
     </View>
   );
 };
 
-export default ClientReport;
+export default workerAtendance;
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F7E4DE', padding: 16 },
   inputContainer: { backgroundColor: '#fff', padding: 16, borderRadius: 8, marginBottom: 16 },
   input: { height: 40, borderBottomWidth: 1, marginBottom: 10, paddingHorizontal: 8 },
   picker: { width: '100%', backgroundColor: '#fff', marginVertical: 8 },
-  fileButton: { backgroundColor: '#eee1f1', padding: 1, borderRadius: 8, marginVertical: 8,borderColor:'black', },
   message: { marginTop: 10, color: 'white', fontWeight: 'bold' },
 });
-
-
