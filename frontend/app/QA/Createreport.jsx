@@ -19,7 +19,7 @@ const Budget = () => {
   const fetchBudget = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://192.168.219.150:8000/FinanceMaterialname/', {
+      const response = await fetch('http://192.168.165.150:8000/FinanceMaterialname/', {
         method: 'GET',
         headers: {
           "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
@@ -39,7 +39,7 @@ const Budget = () => {
   const fetchWorker = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://192.168.219.150:8000/register-into-existing-project/', {
+      const response = await fetch('http://192.168.167.150:8000/register-into-existing-project/', {
         method: 'GET',
         headers: {
           "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
@@ -85,7 +85,7 @@ const Budget = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://192.168.219.150:8000/QualityAssurance/', {
+      const response = await fetch('http://192.168.167.150:8000/QualityAssurance/', {
         method: 'POST',
         headers: {
           "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",

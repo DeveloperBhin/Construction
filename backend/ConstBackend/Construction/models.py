@@ -1,3 +1,4 @@
+from decimal import Decimal, InvalidOperation
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
@@ -185,37 +186,19 @@ class FinanceTransaction(models.Model):
       def __str__(self):
         return self.name 
     
-class FinanceMaterialname(models.Model):
-    name = models.CharField(max_length=255,blank=True,null=True) 
-    
-    def __str__(self):
-        return self.name
-    
-           
-class FinanceMaterial(models.Model):    
-      projectName = models.ForeignKey(User, on_delete=models.CASCADE,default=None)
-      QuantityNeeded = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
-      pricePerQuantity = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
-      TotalAmount=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
       
-      generated_at=models.DateTimeField(default=now)
+     
       
-      
-      
-
-      def __str__(self):
-        return self.name 
-def save(self, *args, **kwargs):
-        """Automatically calculate variance before saving."""
-        if self.QuantityNeeded and self.pricePerQuantity:
-            self.TotalAmount = self.QuantityNeeded * self.pricePerQuantity
-            
-        super().save(*args, **kwargs)
 
 def __str__(self):
-        return f"{self.number} - Tbudget: {self.QuantityNeeded}, Aspent: {self.pricePerQuantity}"
-    
-    
+    return f"{self.number} - Tbudget: {self.QuantityNeeded}, Aspent: {self.pricePerQuantity}"
+
+def save(self, *args, **kwargs):
+    """Automatically calculate variance before saving."""
+    if self.QuantityNeeded and self.pricePerQuantity is not None:
+        self.TotalAmount = self.QuantityNeeded * self.pricePerQuantity
+        
+    super().save(*args, **kwargs) 
            
 class WorkerAttendance(models.Model):    
       project = models.ForeignKey(User, on_delete=models.CASCADE,default=None)
@@ -259,38 +242,9 @@ def __str__(self):
         return f"{self.number} - Tbudget: {self.Quantity_taken}, Aspent: {self.Quantity_usage}"
   
   
-class QualityAssurance(models.Model):    
-      name = models.ForeignKey(FinanceMaterialname,on_delete=models.CASCADE,default=None)
-      worker = models.ForeignKey(RegisterIntoExistingProject,on_delete=models.CASCADE,default=None)
-      QualityStatus= models.CharField(blank=True,null=True,max_length=50, choices=[('Passed', 'Passed'), ('Failed', 'Failed')])
-      
-      
-      generated_at=models.DateTimeField(default=now)
-      
-      
-      
-
-      def __str__(self):
-        return self.QualityStatus   
 
 
-class SupplierReport(models.Model):  
-      user = models.ForeignKey(User,on_delete=models.CASCADE,default=None)  
-      name = models.ForeignKey(FinanceMaterial,on_delete=models.CASCADE,default=None)
-     
-      Status=  models.CharField(
-        max_length=20,
-        choices=[("Pending", "Pending"), ("Approved", "Approved"), ("Rejected", "Rejected")],
-        default="Pending",
-    )
-      Quantity_Needed = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
-      Quantity_Available = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
-      price_Per_Quantity = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
-      Total_Price=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
-      
-      generated_at=models.DateTimeField(default=now)
-      
-      
+  
       
      
       
@@ -308,8 +262,79 @@ def save(self, *args, **kwargs):
 def __str__(self):
         return f"{self.number} - Tbudget: {self.QuantityAvailable}, Aspent: {self.pricePerQuantity}"
     
- 
+class supervisorProject(models.Model):
+    ProjectName = models.ForeignKey(User,on_delete=models.CASCADE) 
+    Startingdate = models.DateField(default=None,blank=True,null=True)
+    Budget = models.DecimalField(decimal_places=2,max_digits=15,default=None,blank=True,null=True)
+    End_date = models.DateField(default=None,blank=True,null=True)
+    name = models.ForeignKey(RegisterIntoExistingProject,on_delete=models.CASCADE)
                
+class Supervisorrequest(models.Model):
+    ProjectName = models.ForeignKey(User,on_delete=models.CASCADE) 
+   
+    Supervisor = models.ForeignKey(RegisterIntoExistingProject,on_delete=models.CASCADE)
+    price= models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+    Total=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+       
+    name = models.CharField(max_length=255,default=None)
+    amount = models.CharField(max_length=255,default=None)
+    date = models.DateField(default=None)
+    def __str__(self):
+        return self.name 
+    def save(self, *args, **kwargs):
+        """Automatically calculate  before saving."""
+        if self.amount and self.price:
+            
+            try:
+             amount = Decimal (self.amount)
+             self.Total = amount * self.price
+            except (ValueError, TypeError, InvalidOperation):
+                self.Total = None
+        super().save(*args, **kwargs)
 
-    
+
+class FinanceMaterial(models.Model):    
+      name = models.ForeignKey(User,on_delete=models.CASCADE)
+      worker = models.ForeignKey(RegisterIntoExistingProject,on_delete=models.CASCADE)
+      supervisorrequest = models.ForeignKey(Supervisorrequest,on_delete=models.CASCADE)
+      Status=  models.CharField(
+        max_length=20,
+        choices=[("Pending", "Pending"), ("Approved", "Approved"), ("Rejected", "Rejected")],
+        default="Pending",
+    )
+      
+      generated_at=models.DateTimeField(default=now)
+              
+
+class SupplierReport(models.Model):  
+      user = models.ForeignKey(User,on_delete=models.CASCADE)  
+      name = models.ForeignKey(FinanceMaterial,on_delete=models.CASCADE)
+     
+      Status=  models.CharField(
+        max_length=20,
+        choices=[("Pending", "Pending"), ("Approved", "Approved"), ("Rejected", "Rejected")],
+        default="Pending",
+    )
+      Quantity_Needed = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      Quantity_Available = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      price_Per_Quantity = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      Total_Price=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      
+      generated_at=models.DateTimeField(default=now)
+      
+class QualityAssurance(models.Model):    
+      name = models.ForeignKey(FinanceMaterial,on_delete=models.CASCADE,default=None)
+      worker = models.ForeignKey(RegisterIntoExistingProject,on_delete=models.CASCADE,default=None)
+      QualityStatus= models.CharField(blank=True,null=True,max_length=50, choices=[('Passed', 'Passed'), ('Failed', 'Failed')])
+      
+      
+      generated_at=models.DateTimeField(default=now)
+      
+      
+      
+
+      def __str__(self):
+        return self.QualityStatus   
+      
+
  

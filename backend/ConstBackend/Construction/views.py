@@ -468,36 +468,8 @@ class FinanceTransactiondetails(APIView):
            
 
          
-class FinanceMaterialNameView(APIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+   
     
-    def get(self, request):  
-        material = FinanceMaterialname.objects.all()
-        materialserializer = FinanceMaterialNameSerializer(material, many=True)
-        return Response(materialserializer.data)
-
-
-  
-    def post(self,request):
-        mater = FinanceMaterialNameSerializer(data=request.data)
-        if mater.is_valid():
-           mater.save()
-           return Response(mater.data,status=status.HTTP_201_CREATED)
-        
-        return Response(mater.errors,status=status.HTTP_400_BAD_REQUEST)
-    
-    
-class FinanceMaterialNamedetails(APIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    
-    def get(self, request, pk):
-        number = get_object_or_404(FinanceMaterialname, pk=pk)
-        serializer = FinanceMaterialNameSerializer(number)
-        return Response(serializer.data)
- 
 
      
 
@@ -510,21 +482,25 @@ class FinanceMaterialView(APIView):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        number = get_object_or_404(FinanceMaterial,)
-        serial = FinanceMaterialSerializer(number)
-        return Response(serial.data)
+     materials = FinanceMaterial.objects.all()  # Retrieve all materials
+     serializer = FinanceMaterialSerializer(materials, many=True)  # Use many=True
+     return Response(serializer.data)
  
     def post(self,request):
         materialform = request.data.get("materialform", [])  # Get list of reports
         if not isinstance(materialform, list):  
             return Response({"error": "Invalid data format"}, status=status.HTTP_400_BAD_REQUEST)
         
-        projectName = get_object_or_404(User)
+        
         
 
-        materserial = FinanceMaterialSerializer(data=materialform, many=True)  
+        materserial = FinanceMaterialSerializer(data=materialform, many=True) 
+        user = request.user
+         
+        project  = RegisterIntoExistingProject.objects.filter().first()
+        material  = Supervisorrequest.objects.filter().first()
         if materserial.is_valid():
-            materserial.save(projectName=request.user)
+            materserial.save(name=user,worker=project,supervisorrequest=material)
             return Response(materserial.data, status=status.HTTP_201_CREATED)
 
         return Response(materserial.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -622,14 +598,13 @@ class QualityAssuranceView(APIView):
         Assuranceform = request.data.get("Assuranceform",[])
         if not isinstance(Assuranceform, list):
             return Response({"error":"Invalid data format"})
-        qualityserializer = QualityAssuranceSerializer(data=Assuranceform)
+        qualityserializer = QualityAssuranceSerializer(data=Assuranceform, many=True)
         worker = RegisterIntoExistingProject.objects.filter(id=request.user).first()
 
-        material= FinanceMaterialname.objects.filter(user=request.user.id).first()
-
+        
 
         if qualityserializer.is_valid():
-            qualityserializer.save(worker=worker.id,material=material.id)
+            qualityserializer.save(worker=worker.id)
             return Response ( qualityserializer.data, status=status.HTTP_201_CREATED)
         print("Validation Errors:", qualityserializer.errors)
         
@@ -657,13 +632,22 @@ class SupplierReportView(APIView):
             return Response({"error":"Invalid data format"})
         
 
-         supplierserializer = SupplierReportSerializer(data=supplierform)
-         print("serializer error:")
-        
+         supplierserializer = SupplierReportSerializer(data=supplierform, many=True)
+         print("supplierserializer error:")
+          # Fetch the user correctly
+         user = get_object_or_404(User, id=request.user.id)
+
+        # Use a valid field instead of 'material'
+         name = FinanceMaterial.objects.filter(qualityassurance=request.user.id).first()  # Change 'qualityassurance' if necessary
+
+        # Serialize the data
+         supplierserializer = SupplierReportSerializer(data=supplierform, many=True)
+
          if supplierserializer.is_valid():
-            supplierserializer.save()
-            return Response ( supplierserializer.data, status=status.HTTP_201_CREATED)
-        
+            # Save while passing correct fields
+            supplierserializer.save(user=user)  # REMOVE 'material' if it doesn't exist
+            return Response(supplierserializer.data, status=status.HTTP_201_CREATED)
+
          return Response(supplierserializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class SupplierReportdetails(APIView):
@@ -672,7 +656,77 @@ class SupplierReportdetails(APIView):
         serializer = SupplierReportSerializer(worker)
         return Response(serializer.data)
         
+class SupervisorProjectView(APIView):
+
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+   
     
+    def post(self,request):
+       
+
+         supevisorserializer = supevisorProjectSerializer(data=request.data )
+         print("supervisorserializer error:")
+        
+         user = request.user
+
+   
+         project = RegisterIntoExistingProject.objects.filter(user=user).first()
+        
+         if supevisorserializer.is_valid():
+       
+            supevisorserializer.save(ProjectName=user,name=project)  
+            return Response(supevisorserializer.data, status=status.HTTP_201_CREATED)
+
+         return Response(supevisorserializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class supervisorProjectdetails(APIView):
+    def get(self, request, pk):
+        supervisor = get_object_or_404(supervisorProject, pk=pk)
+        serializer = SupplierReportSerializer(supervisor)
+        return Response(serializer.data)
+        
+       
+class SupervisorrequestView(APIView):
+
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        request = Supervisorrequest.objects.all()
+        serializer = SupevisorrequestSerializer(request)
+        return Response(serializer.data)
+        
+    
+    
+    def post(self,request):
+        
+      requestserializer = SupevisorrequestSerializer(data=request.data, many=True)
+      
+      
+      user = request.user
+        
+      project=RegisterIntoExistingProject.objects.filter(user=user).first()
+
+        
+         
+       
+      if requestserializer.is_valid():
+           
+           
+            requestserializer.save(ProjectName=user,Supervisor=project) 
+            return Response(requestserializer.data, status=status.HTTP_201_CREATED)
+
+     
+      return Response(requestserializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class supervisorrequestdetails(APIView):
+    def get(self, request, pk):
+        request = get_object_or_404(Supervisorrequest, pk=pk)
+        serializer = SupplierReportSerializer(request)
+        return Response(serializer.data)
+        
+       
 
     
 

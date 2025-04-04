@@ -1,153 +1,116 @@
-import { StyleSheet, Text, View ,Image} from 'react-native';
-import React from 'react';
-import {Table , Row ,Rows} from 'react-native-table-component';
-import { Link } from 'expo-router'
-
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableOpacity, TextInput, Button } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 
 const Report = () => {
-    const tableHead=['Report','Task','Status','Asignees','Due Date','Tags','File'];
-    const tableData=[];
+  const [materials, setMaterials] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const navigation = useNavigation();
+  
+  useEffect(() => {
+    fetchMaterials();
+  }, []);
+
+  const fetchMaterials = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://192.168.165.150:8000/FinanceMaterial/', {
+        method: 'GET',
+        headers: {
+          "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
+          'Content-Type': 'application/json'
+        },
+      });
+      if (!response.ok) throw new Error(`HTTP status ${response.status}`);
+      const data = await response.json();
+      setMaterials(data);
+    } catch (error) {
+      console.error("Error fetching materials:", error);
+      setMessage("Failed to fetch materials.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateMaterial = (index, field, value) => {
+    const updatedMaterials = [...materials];
+    updatedMaterials[index][field] = value;
+    setMaterials(updatedMaterials);
+  };
+
+  const handleSubmit = async () => {
+    if (materials.some(item => !item.QuantityNeeded || !item.pricePerQuantity || !item.TotalAmount)) {
+      setMessage("Please fill in all fields before submitting.");
+      return;
+    }
+    setLoading(true);
+    setMessage('');
+    try {
+      const response = await fetch('http://192.168.167.150:8000/FinanceMaterial/', {
+        method: 'POST',
+        headers: {
+          "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ materialform: materials }),
+      });
+      if (!response.ok) throw new Error("Submission failed");
+      setMessage("Form submitted successfully!");
+      navigation.navigate('Finance/(tabs)', { screen: 'Home' });
+    } catch (error) {
+      console.error("Error submitting materials:", error);
+      setMessage("An error occurred while submitting.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderItem = ({ item, index }) => (
+    <View style={styles.row}>
+     
+       <Text style={styles.itemText}>💰 material Quantity Needed: {item.QuantityNeeded}</Text>
+        <Text style={styles.itemText}>💲 material PricePerQuantity: {item.pricePerQuantity}</Text>
+        <Text style={styles.itemText}>💲 material TotalAmount: {item.TotalAmount}</Text>
+
+            
+      <TextInput style={styles.input} placeholder="Quantity" keyboardType="numeric"
+        value={item.QuantityNeeded} onChangeText={(text) => updateMaterial(index, 'QuantityNeeded', text)} />
+      <TextInput style={styles.input} placeholder="Price" keyboardType="numeric"
+        value={item.pricePerQuantity} onChangeText={(text) => updateMaterial(index, 'pricePerQuantity', text)} />
+      <TextInput style={styles.input} placeholder="Total" keyboardType="numeric"
+        value={item.TotalAmount} onChangeText={(text) => updateMaterial(index, 'TotalAmount', text)} />
+    </View>
+  );
+
   return (
-    
     <View style={styles.container}>
-      <Image style={styles.logo} source={require('../../assets/images/workers.png')} />
-  
-    
-  
-      <View style={styles.button}>
-        <Text style={styles.Pname}>Project Name:</Text>
-        <Text style={styles.Pcode}>Project Code:</Text>
-      </View>
+      <Text style={styles.title}>Material Budget</Text>
+      {loading ? (
+        <ActivityIndicator size="large" color="#9A340C" />
+      ) : materials.length > 0 ? (
+        <FlatList data={materials} keyExtractor={(item) => item.id.toString()} renderItem={renderItem} />
+      ) : (
+        <Text style={styles.noDataText}>No Materials Available</Text>
+      )}
+      <Button title="Submit" onPress={handleSubmit} disabled={loading} />
+      {message ? <Text style={styles.message}>{message}</Text> : null}
+    </View>
+  );
+};
 
-      <View style={styles.view}>
-         <Link   href='/Task '>
-        <Text style={styles.Text}>View Response: <Image style={styles.image} source={require('../../assets/images/response.png')} />
-        </Text>
-       </Link>
-       
-      </View>
-    
-   <View style={styles.container1}>
-    <Text>Reports</Text>
-        <Table  borderStyle={{ borderWidth: 1, borderColor: '#ddd',borderRadius:8 }} style={styles.Table}>
-            <Row data={tableHead} style={styles.head} />
-            <Rows data={tableData} style={styles.text}/>
-        </Table>
-        </View>
-   
-
-
-      </View>
-   
-
-     
-      
-     
-     
-  
-
-    
-  )
-}
-
-export default Report
-
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,   // Ensures full screen
-    
-      backgroundColor: '#F7E4DE',
-    },
-    view:{
- backgroundColor:'#D9734A',
- marginTop:10,
-marginLeft:'50%',
-flexDirection:'row',
-borderRadius:8,
-alignItems:'center'
-    },
-    Text: {
-      fontSize: 20,
-   
-    color: 'black',
-    textAlign: 'center',
-    },
-   
-
-    logo:{
-      
-      marginTop:0,
-      width:40,
-      height:40,
-      marginLeft:150,
-
-    },
-  image:{
-   
-      width:20,
-      height:15,
-     
-     
-   
-      
-       
-     
-     
-    },
-
-
-    button:{
-      fontSize: 18,
-      fontWeight: 'bold',
-      backgroundColor: '#9A340C',
-      height:60,
-      
-      
-      
-      borderRadius:8,
-      paddingHorizontal:10,
-      paddingVertical:15,
-      width:'100%',
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#F7E4DE', padding: 16 },
+  title: { fontWeight: 'bold', fontSize: 20, textAlign: 'center', marginBottom: 10 },
+  sectionTitle: { fontWeight: 'bold', fontSize: 18, marginBottom: 5, marginTop: 15, color: '#333' },
+  card: { backgroundColor: '#fff', padding: 10, borderRadius: 8, marginVertical: 5, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 },
+  itemText: { fontSize: 16, color: '#333' },
  
-      borderColor:'white',
-      borderWidth:1,
-      flexDirection:'row',
-      justifyContent:'space-between',
+  deleteButton: { marginTop: 10, alignSelf: '' },
+  listContainer: { paddingBottom: 20 },
+  noDataText: { fontSize: 16, color: '#9A340C', textAlign: 'center', marginTop: 20 },
+  message: { color: 'red', textAlign: 'center', marginTop: 10 },
+});
 
-      
-      
-
-    },
- 
- 
-    container1:{
-        marginTop:50,
-    
-        padding:20,
-      
-        
-    },
-
-   Table:{
-    borderWidth:4,
-   
-      backgroundColor:'#9A340C'
-    
-   },
-   head:{
-    height:40,
-    backgroundColor:''
-
-   },
-  text:
-    { margin:2, textAlign: 'center' ,color:''},
-
-  
-  
-    
-    
-      
-        
-
-  });
+export default Report;

@@ -2,169 +2,137 @@ import { StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableOpacity, 
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { Picker } from '@react-native-picker/picker';
-
-
-
-
 
 const Report = () => {
-  const[material,setMaterial] = useState([]);
-  const[Quantity_Needed,setQuantity_Needed] = useState('');
-  const[price_Per_Quantity,setprice_Per_Quantity] = useState('');
-  const[Total_Amount,setTotal_Amount] =useState('');
-  const deleteTransaction = (id) => {
-    setMaterial(material.filter(item => item.id !== id));
-  };
-  
+  const [material, setMaterial] = useState([]);
   const [message, setMessage] = useState('');
-  
-  const [loading, setLoading] = useState(false); 
-  const navigation=useNavigation(); 
+  const [loading, setLoading] = useState(false);
+  const navigation = useNavigation(); 
 
- 
-   useEffect(() => {
-     fetchMaterial();
-   }, []);
- 
-   const fetchMaterial = async () => {
-     setLoading(true);
- 
-     try {
-         const response = await fetch('http://192.168.219.150:8000/FinanceMaterialname/', {
-           method: 'GET',
-           headers: { 
-             "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
-             'Content-Type': 'application/json' },
-    
-         });
-         const data = await response.json();
-         const updatedData = data.map(item => ({
-          ...item,
-          
-          Quantity_Needed: '',
-          price_Per_Quantity: '',
-          Total_Amount:'',
+  useEffect(() => {
+    fetchMaterial();
+  }, []);
 
-          
-        }));
-  
-         setMaterial(updatedData);
-       } catch (error) {
-       console.error("Error fetching material:", error);
-     } finally {
-       setLoading(false);
-     }
-   };
-   const updateRow = (index, field, value) => {
+  const fetchMaterial = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://192.168.165.150:8000/FinanceMaterial/', {
+        method: 'GET',
+        headers: {
+          "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      const updatedData = data.map(item => ({
+        ...item,
+        Quantity_Needed: '',
+        price_Per_Quantity: '',
+        Total_Amount: '',
+      }));
+      setMaterial(updatedData);
+    } catch (error) {
+      console.error("Error fetching material:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateRow = (index, field, value) => {
     const updatedMaterial = [...material];
     updatedMaterial[index][field] = value;
     setMaterial(updatedMaterial);
   };
- 
-     
- 
-   
+
+  const deleteTransaction = (id) => {
+    setMaterial(material.filter(item => item.id !== id));
+  };
+
   const handleSupplier = async () => {
     const isEmpty = material.some(item => 
-      
-      item.Quantity_Needed.trim() === '' || 
-      item.price_Per_Quantity.trim() === '' || 
-      item.Total_Amount.trim() === '' 
-     
-      
-      
-  );
+      item.Quantity_Needed === '' || 
+      item.Quantity_Available === '' ||
+      item.price_Per_Quantity === '' || 
+      item.Total_Amount === ''
+    );
 
-  if (material.length === 0 || isEmpty) {
+    if (material.length === 0 || isEmpty) {
       setMessage("Please fill in all fields before submitting.");
       return;
-  }
+    }
+
     setLoading(true);
     setMessage('');
-
-    // Prepare the data in the correct format
-  
     try {
-        const response = await fetch('http://192.168.219.150:8000/SupplierReport/', {
-            method: 'POST',
-            headers: { 
-                "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({supplierform:material}),  
-        });
+      const response = await fetch('http://192.168.167.150:8000/SupplierReport/', {
+        method: 'POST',
+        headers: {
+          "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ supplierform: material }),
+      });
 
-        if (response.ok) {
-            const data = await response.json();
-            setMessage("form submitted successfully!");
-            navigation.navigate('Finance/(tabs)', { screen: 'Home' });
-        } else {
-            const errorData = await response.json();
-            setMessage(errorData.message || "An error occurred.");
-        }
+      if (response.ok) {
+        const data = await response.json();
+        setMessage("Form submitted successfully!");
+        navigation.navigate('Finance/(tabs)', { screen: 'Home' });
+      } else {
+        const errorData = await response.json();
+        setMessage(errorData.message || "An error occurred.");
+      }
     } catch (error) {
-        console.error("Error:", error);
-        setMessage("An error occurred while submitting reports.");
+      console.error("Error:", error);
+      setMessage("An error occurred while submitting reports.");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
-  
- // Render Each Row Independently
-const renderItem = ({ item, index }) => (
-  <View style={styles.inputContainer}>
-    <Text style={styles.cell}>{item.id}
-   
-    <TextInput
-      style={{ height: 0, opacity: 0 }} // Makes it hidden
-      value={item.material} // Keeps the name stored in input
-      editable={false} // Prevents user from editing
-    />
+  };
 
-    </Text>
-    <Text style={styles.cell}>{item.name}
-   
-   <TextInput
-     style={{ height: 0, opacity: 0 }} // Makes it hidden
-     value={item.material} // Keeps the name stored in input
-     editable={false} // Prevents user from editing
-   />
+  const renderItem = ({ item, index }) => (
+    <View style={styles.inputContainer}>
+      <Text style={styles.itemText}>💰 Material Quantity Needed: {item.QuantityNeeded}</Text>
+      <Text style={styles.itemText}>💲 Material Price Per Quantity: {item.pricePerQuantity}</Text>
+      <Text style={styles.itemText}>💲 Material Total Amount: {item.TotalAmount}</Text>
 
-   </Text>
-    
+      <TextInput
+        style={styles.input}
+        placeholder="Quantity Needed"
+        keyboardType="numeric"
+        value={item.Quantity_Needed}
+        onChangeText={(text) => updateRow(index, 'Quantity_Needed', text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Available Quantity"
+        keyboardType="numeric"
+        value={item.Quantity_Available}
+        onChangeText={(text) => updateRow(index, 'Quantity_Available', text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Price per Quantity"
+        keyboardType="numeric"
+        value={item.price_Per_Quantity}
+        onChangeText={(text) => updateRow(index, 'price_Per_Quantity', text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Total Amount"
+        keyboardType="numeric"
+        value={item.Total_Amount}
+        onChangeText={(text) => updateRow(index, 'Total_Amount', text)}
+      />
 
+      <TouchableOpacity onPress={() => deleteTransaction(item.id)} style={styles.deleteButton}>
+        <Ionicons name="trash" size={24} color="red" />
+      </TouchableOpacity>
+    </View>
+  );
 
-    <TextInput
-      style={styles.input}
-      placeholder="QuantityNeeded"
-      keyboardType="numeric"
-      value={item.Quantity_Needed}
-      onChangeText={(text) =>{ setQuantity_Needed(text);  updateRow(index, 'Quantity_Needed', text);}}
-    />
-    <TextInput
-      style={styles.input}
-      placeholder="Price per Quantity"
-      keyboardType="numeric"
-      value={item.price_Per_Quantity}
-      onChangeText={(text) =>{ setprice_Per_Quantity(text);  updateRow(index, 'price_Per_Quantity', text);}}
-    />
-    <TextInput
-      style={styles.input}
-      placeholder="Total Amount"
-      keyboardType="numeric"
-      value={item.Total_Amount}
-      onChangeText={(text) =>{ set_Total_Amount(text);  updateRow(index, 'Total_Amount', text);}}
-    />
-  <TouchableOpacity onPress={() => deleteTransaction(item.id)} style={styles.deleteButton}>
-      <Ionicons name="trash" size={24} color="red" />
-    </TouchableOpacity>
-  </View>
-  
-);
   return (
     <View style={styles.container}>
-  
+      <Text>Material Reports</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#9A340C" />
       ) : material.length > 0 ? (
@@ -179,10 +147,6 @@ const renderItem = ({ item, index }) => (
       )}
 
       <View style={styles.container}>
-    
-     
-     
-
         {loading ? (
           <ActivityIndicator size="large" color="#D84315" />
         ) : (
@@ -190,10 +154,7 @@ const renderItem = ({ item, index }) => (
         )}
 
         {message ? <Text style={styles.message}>{message}</Text> : null}
-
-        
       </View>
-      
     </View>
   );
 };
@@ -202,87 +163,21 @@ export default Report;
 
 const styles = StyleSheet.create({
   container: {
-    
     padding: 10,
   },
-  repot:{
-    fontWeight:'bold',
-    justifyContent:'center',
-    textAlign:'center'
-
+  itemText: {
+    fontSize: 14,
+    marginVertical: 5,
   },
-  add:{
-    color:'red'
-
-  },
-  logo:{
-      
-    marginTop:0,
-    width:40,
-    height:40,
-    marginLeft:150,
-
-  },
-  Pname:{
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBlockStart:1
-
-  },
-  Pcode:{
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBlockEnd:0
-
-  },
-  button:{
-    fontSize: 18,
-    fontWeight: 'bold',
-    backgroundColor: '#9A340C',
-    height:60,
-    
-    
-    
-    borderRadius:8,
-    paddingHorizontal:10,
-    paddingVertical:15,
-    width:'100%',
-
-    borderColor:'white',
-    borderWidth:1,
-    flexDirection:'row',
-    justifyContent:'space-between',
-
-    
-    
-
-  },
-  tableContainer: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
-    margin: 10,
-    padding: 10,
-  },
-  row: {
-    flexDirection: 'row',
+  input: {
+    height: 40,
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    paddingVertical: 8,
-  },
-  cellHeader: {
-    fontWeight: 'bold',
-    paddingHorizontal: 5,
-  },
-  cell: {
-    paddingHorizontal: 5,
-  },
-  button1: {
-    backgroundColor: '#E44D26',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
     marginBottom: 10,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  inputContainer: {
+    marginBottom: 20,
   },
   listContainer: {
     paddingBottom: 20,
@@ -293,53 +188,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
     textAlign: 'center',
   },
- 
   message: {
     marginTop: 10,
     color: 'red',
     textAlign: 'center',
   },
-  
-   
-    cell: {
-      width: 80, // Adjust this width as per your requirement
-      fontWeight: 'bold',
-      marginRight: 5,
-    },
-    input: {
-      
-      
-      borderColor: '#ccc',
-     
-      borderRadius: 5,
-      marginHorizontal:1,
-      fontSize:8,
-      textAlign:'center'
-    },
-    inputContainer: {
-      alignItems: 'center',
-      marginBottom: 10,
-    },
-    placeholderText: {
-      textAlign: 'center',
-      fontSize: 14,
-      fontWeight: 'bold',
-      color: 'gray',
-    },
-    com:{
-      
-      borderWidth: 1,
-      borderColor: '#ccc',
-      paddingHorizontal: 8,
-      paddingVertical: 14,
-      borderRadius: 5,
-      marginHorizontal: 15,
-      fontSize:16,
-      
-
-    },
-    container: { flex: 1, backgroundColor: '#F7E4DE', padding: 16 },
-    inputContainer: { backgroundColor: '#fff', padding: 16, borderRadius: 8, marginBottom: 16 },
-    input: { height: 40, borderBottomWidth: 1, marginBottom: 10, paddingHorizontal: 8 },
+  deleteButton: {
+    marginTop: 10,
+  },
 });
-  

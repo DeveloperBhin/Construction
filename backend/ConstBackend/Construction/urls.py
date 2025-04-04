@@ -24,9 +24,7 @@ urlpatterns = [
     path('FinanceTransactionNo/<int:pk>/',FinanceTransactionNodetails.as_view(),name='FinanceTransactionNo'),
     path('FinanceTransaction/',FinanceTransactionView.as_view(),name='FinanceTransaction'),
     path('FinanceTransaction/<int:pk>/',FinanceTransactiondetails.as_view(),name='FinanceTransaction'),
-   path('FinanceMaterialname/',FinanceMaterialNameView.as_view(),name='FinanceMaterialname'),
-    path('FinanceMaterialname/<int:pk>/',FinanceMaterialNamedetails.as_view(),name='FinanceMaterialname'),
-    path('FinanceMaterial/',FinanceMaterialView.as_view(),name='FinanceMaterial'),
+   path('FinanceMaterial/',FinanceMaterialView.as_view(),name='FinanceMaterial'),
     path('FinanceMaterial/<int:pk>/',FinanceMaterialdetails.as_view(),name='FinanceMaterial'),
     path('WorkerAttendance/',WorkerAttendanceView.as_view(),name='WorkerAttendance'),
     path('WorkerAttendance/<int:pk>/',WorkerAttendancedetails.as_view(),name='WorkerAttendance'),
@@ -36,6 +34,10 @@ urlpatterns = [
     path('QualityAssurance/<int:pk>/',QualityAssurancedetails.as_view(),name='QualityAssurance'),
     path('SupplierReport/',SupplierReportView.as_view(),name='SupplierReport'),
     path('SupplierReport/<int:pk>/',SupplierReportdetails.as_view(),name='SupplierReport'),
+    path('SupervisorProject/',SupervisorProjectView.as_view(),name='SupervisorProject'),
+    path('SupervisorProject/<int:pk>/',supervisorProjectdetails.as_view(),name='SupervisorProject'),
+    path('SupervisorRequest/',SupervisorrequestView.as_view(),name='SupervisorRequest'),
+    path('SupervisorRequest/<int:pk>/',supervisorrequestdetails.as_view(),name='SupervisorRequest'),
 
 
 ]

@@ -9,8 +9,7 @@ const Home = () => {
   return (
     
     <View style={styles.container}>
-      <Image style={styles.logo} source={require('../../../assets/images/workers.png')} />
-  
+     
     
     <View style={styles.welcome}>
       <Text style={styles.Text}> WELCOME</Text>
@@ -27,7 +26,7 @@ const Home = () => {
         <View style={styles.user}>
         <TouchableOpacity  >
        
-      <Link href='sitesupevisor/Reports'  >
+      <Link href='sitesupevisor/Report/'  >
       <Image style={styles.client} source={require('../../../assets/images/public-relation.png')} />{'\n'}
       <Text style={styles. clienttext}>Reports</Text>
      
@@ -38,13 +37,13 @@ const Home = () => {
       </TouchableOpacity>
       <TouchableOpacity  >
        
-       <Link href='sitesupevisor/Materials'  >
+       <Link href='sitesupevisor/Material'  >
        <Image style={styles.Finance} source={require('../../../assets/images/profit.png')} />{'\n'}
        <Text style={styles. clienttext}>Requests</Text>
    
       </Link>
        </TouchableOpacity>
-      
+       
      
       </View>
       
@@ -57,7 +56,16 @@ const Home = () => {
 
      </Link>
       </TouchableOpacity>
-     
+      <TouchableOpacity  >
+              
+              <Link href='sitesupevisor/Project'  >
+              <Image style={styles.Finance} source={require('../../../assets/images/quality-assurance.png')} />{'\n'}
+              <Text style={styles. clienttext}>Monitor Project </Text>
+          
+             </Link>
+              </TouchableOpacity>      
+            
+      
       
      
       </View>

@@ -23,7 +23,7 @@ const Budget = () => {
   const fetchBudgetno = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://192.168.219.150:8000/FinanceBudgetNo/', {
+      const response = await fetch('http://192.168.165.150:8000/FinanceBudgetNo/', {
         method: 'GET',
         headers: {
           "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
@@ -62,7 +62,7 @@ const Budget = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://192.168.219.150:8000/FinanceBudget/', {
+      const response = await fetch('http://192.168.165.150:8000/FinanceBudget/', {
         method: 'POST',
         headers: {
           "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",

@@ -42,8 +42,8 @@ const Home = () => {
    
       </Link>
        </TouchableOpacity>
-      
-     
+
+   
       </View>
       
      

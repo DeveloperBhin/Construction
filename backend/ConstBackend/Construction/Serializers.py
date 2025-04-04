@@ -54,10 +54,6 @@ class FinanceTransactionSerializer(serializers.ModelSerializer):
         model = FinanceTransaction
         fields = '__all__'        
      
-class FinanceMaterialNameSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FinanceMaterialname
-        fields = '__all__'
 
 class FinanceMaterialSerializer(serializers.ModelSerializer):
     class Meta:
@@ -86,6 +82,21 @@ class SupplierReportSerializer(serializers.ModelSerializer):
         model = SupplierReport
         fields = '__all__'           
                      
+class supevisorProjectSerializer(serializers.ModelSerializer):
+    ProjectName = serializers.PrimaryKeyRelatedField(read_only=True)
+    name = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = supervisorProject
+        fields = '__all__'           
+                     
+class SupevisorrequestSerializer(serializers.ModelSerializer):
+    ProjectName = serializers.PrimaryKeyRelatedField(read_only=True)
+    Supervisor = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Supervisorrequest
+        fields = '__all__'           
+                     
     
-          
     
