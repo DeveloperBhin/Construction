@@ -62,7 +62,8 @@ const ClientReport = () => {
 
       const response = await fetch('http://192.168.167.150:8000/Clients/', {
         method: 'POST',
-        headers: { 'Content-Type': 'multipart/form-data'
+        headers: { 
+           "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482",'Content-Type': 'multipart/form-data'
 
         },
         body: formData

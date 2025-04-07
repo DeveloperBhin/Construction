@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'ConstBackend.wsgi.application'
 DATABASES = {
    'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME':'Consbd' ,
+        'NAME':'constructiondb' ,
         'HOST':'localhost' ,
         'PASSWORD':'' ,
         'USER':'root',

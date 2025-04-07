@@ -273,8 +273,8 @@ class Supervisorrequest(models.Model):
     ProjectName = models.ForeignKey(User,on_delete=models.CASCADE) 
    
     Supervisor = models.ForeignKey(RegisterIntoExistingProject,on_delete=models.CASCADE)
-    price= models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
-    Total=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+    price= models.DecimalField(decimal_places=2,max_digits=12,default=None)
+    total=models.DecimalField(decimal_places=2,max_digits=12,default=None)
        
     name = models.CharField(max_length=255,default=None)
     amount = models.CharField(max_length=255,default=None)
@@ -294,9 +294,14 @@ class Supervisorrequest(models.Model):
 
 
 class FinanceMaterial(models.Model):    
-      name = models.ForeignKey(User,on_delete=models.CASCADE)
-      worker = models.ForeignKey(RegisterIntoExistingProject,on_delete=models.CASCADE)
-      supervisorrequest = models.ForeignKey(Supervisorrequest,on_delete=models.CASCADE)
+    
+      worker = models.ForeignKey(RegisterIntoExistingProject,on_delete=models.CASCADE,default=None)
+      user = models.ForeignKey(User,on_delete=models.CASCADE,default=None)
+      
+      amount = models.IntegerField()
+      price = models.FloatField()
+      name = models.CharField(max_length=255,default=None)
+      total = models.FloatField()
       Status=  models.CharField(
         max_length=20,
         choices=[("Pending", "Pending"), ("Approved", "Approved"), ("Rejected", "Rejected")],
@@ -308,9 +313,17 @@ class FinanceMaterial(models.Model):
 
 class SupplierReport(models.Model):  
       user = models.ForeignKey(User,on_delete=models.CASCADE)  
-      name = models.ForeignKey(FinanceMaterial,on_delete=models.CASCADE)
-     
+    
       Status=  models.CharField(
+        max_length=20,
+        choices=[("Pending", "Pending"), ("Approved", "Approved"), ("Rejected", "Rejected")],
+        default="Pending",
+    )
+      amount = models.IntegerField()
+      price = models.FloatField()
+      name = models.CharField(max_length=255)
+      total = models.FloatField()
+      SupplierStatus=  models.CharField(
         max_length=20,
         choices=[("Pending", "Pending"), ("Approved", "Approved"), ("Rejected", "Rejected")],
         default="Pending",
@@ -322,9 +335,27 @@ class SupplierReport(models.Model):
       
       generated_at=models.DateTimeField(default=now)
       
+      def __str__(self):
+        return self.name 
+      def save(self, *args, **kwargs):
+        """Automatically calculate  before saving."""
+        if self.Quantity_Available and self.price_Per_Quantity:
+            
+            try:
+             Quantity_Available = Decimal (self.Quantity_Available)
+             self.Total_Price = Quantity_Available * self.price_Per_Quantity
+            except (ValueError, TypeError, InvalidOperation):
+                self.Total_Price = None
+        super().save(*args, **kwargs)
+
+
+      
 class QualityAssurance(models.Model):    
-      name = models.ForeignKey(FinanceMaterial,on_delete=models.CASCADE,default=None)
       worker = models.ForeignKey(RegisterIntoExistingProject,on_delete=models.CASCADE,default=None)
+      name = models.CharField(max_length=255,default=None)
+      email = models.EmailField(default=None)  
+      phone = models.BigIntegerField(default=None)
+      TypeOfWork=models.CharField(max_length=255,default=None)
       QualityStatus= models.CharField(blank=True,null=True,max_length=50, choices=[('Passed', 'Passed'), ('Failed', 'Failed')])
       
       

@@ -22,8 +22,7 @@ const Budget = () => {
       const response = await fetch('http://192.168.167.150:8000/SupervisorRequest/', {
         method: 'GET',
         headers: {
-          "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
-          'Content-Type': 'application/json'
+           "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482",'Content-Type': 'application/json'
         }
       });
       const data = await response.json();
@@ -57,7 +56,7 @@ const Budget = () => {
 
 
   const handleQualityAssurance = async () => {
-    if (budget.length === 0 || budget.some(item => !item.QualityStatus)) {
+    if (budget.length === 0 || budget.some(item => !item.Status  )) {
       setMessage("Please fill in all fields before submitting.");
       return;
     }
@@ -66,13 +65,12 @@ const Budget = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://192.168.167.150:8000/QualityAssurance/', {
+      const response = await fetch('http://192.168.167.150:8000/FinanceMaterial/', {
         method: 'POST',
         headers: {
-          "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
-          "Content-Type": "application/json"
+          "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482", "Content-Type": "application/json"
         },
-        body: JSON.stringify({ Assuranceform: budget })
+        body: JSON.stringify({ materialform: budget })
       });
 
       if (response.ok) {
@@ -92,8 +90,37 @@ const Budget = () => {
 
   const renderBudgetItem = ({ item, index }) => (
     <View style={styles.card}>
-      <Text style={styles.itemText}>💰 material ID: {item.id}</Text>
-      <Text style={styles.itemText}>💲 material Name: {item.name}</Text>
+      <Text style={styles.itemText}>💰 material ID: {item.id}
+       
+      </Text>
+      <Text style={styles.itemText}>💲 material Name: {item.name}
+        <TextInput
+              style={{ height: 0, opacity: 0 }} 
+              value={item.name} 
+              editable={false} 
+            />
+      </Text>
+      <Text style={styles.itemText}>💲 material Amount Neede: {item.amount}
+        <TextInput
+              style={{ height: 0, opacity: 0 }} 
+              value={item.amount} 
+              editable={false} 
+            />
+      </Text>
+      <Text style={styles.itemText}>💲 material Price Per Amount: {item.price}
+        <TextInput
+              style={{ height: 0, opacity: 0 }} 
+              value={item.price}
+              editable={false} 
+            />
+      </Text>
+      <Text style={styles.itemText}>💲 material Total Amount: {item.total}
+        <TextInput
+              style={{ height: 0, opacity: 0 }} 
+              value={item.total} 
+              editable={false} 
+            />
+      </Text>
       
 
       <Picker
@@ -101,8 +128,10 @@ const Budget = () => {
         style={styles.picker}
         onValueChange={(itemValue) => updateRow(index, 'Status', itemValue)}
       >
-        <Picker.Item label='Passed' value='Passed' />
-        <Picker.Item label='Failed' value='Failed' />
+        <Picker.Item label='Pending' value='Pending' />
+        <Picker.Item label='Approved' value='Approved' />
+        <Picker.Item label='Rejected' value='Rejected' />
+     
       </Picker>
       
 
@@ -122,7 +151,7 @@ const Budget = () => {
         <ActivityIndicator size="large" color="#9A340C" />
       ) : budget.length > 0 ? (
         <>
-          <Text style={styles.sectionTitle}>📊 Budget Details</Text>
+          <Text style={styles.sectionTitle}>📊 Material Details</Text>
           <FlatList
             data={budget}
             keyExtractor={(item) => item.id.toString()}

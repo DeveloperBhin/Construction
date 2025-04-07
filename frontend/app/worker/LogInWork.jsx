@@ -32,11 +32,10 @@ const workerAtendance = () => {
       formData.append('workinghrs',workinghrs)
       formData.append('PerfomedWork', PerformedWork);
 
-      const response = await fetch('http://192.168.165.150:8000/WorkerAttendance/', {
+      const response = await fetch('http://192.168.167.150:8000/WorkerAttendance/', {
         method: 'POST',
         headers: {
-          "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
-          'Content-Type': 'multipart/form-data',
+          "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482", 'Content-Type': 'multipart/form-data',
         },
         body: formData,
       });

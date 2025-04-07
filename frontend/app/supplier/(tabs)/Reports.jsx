@@ -1,118 +1,136 @@
-import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableOpacity, Button, TextInput } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
+import {Picker} from '@react-native-picker/picker'
 
-const Client = () => {
-  const [clients, setClients] = useState([]);  // Ensure it's an array
-  const [loading, setLoading] = useState(false);  // State to track loading status
+const Report = () => {
+  const [material, setMaterial] = useState([]);
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigation = useNavigation(); 
 
   useEffect(() => {
-    fetchClients();
+    fetchMaterial();
   }, []);
 
-  const fetchClients = async () => {
+  const fetchMaterial = async () => {
     setLoading(true);
-
     try {
-      const response = await fetch('http://192.168.1.150:8000/Clients/');
+      const response = await fetch('http://192.168.167.150:8000/FinanceMaterial/', {
+        method: 'GET',
+        headers: {
+          "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482", 'Content-Type': 'application/json',
+        },
+      });
       const data = await response.json();
-      setClients(data);
+      const updatedData = data.map(item => ({
+        ...item,
+        Quantity_Needed: '',
+        price_Per_Quantity: '',
+        Total_Amount: '',
+      }));
+      setMaterial(updatedData);
     } catch (error) {
-      console.error("Error fetching clients:", error);
+      console.error("Error fetching material:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const renderItem = ({ item }) => (
-    <View style={styles.tableContainer}>
-      <View style={styles.row}>
-      <Text style={styles.cellHeader}>Task:</Text> 
-      <Text style={styles.cell}>{item.Task}</Text>
-      </View>
-      <View style={styles.row}>
-      <Text style={styles.cellHeader}>Status:</Text>
-      <Text style={styles.cell}>{item.Status}</Text>
-      </View>
-      <View style={styles.row}>
-      <Text style={styles.cellHeader}>Assignees: </Text>
-      <Text style={styles.cell}>{item.Assignees}</Text>
-      </View>
-      <View style={styles.row}>
-      <Text style={styles.cellHeader}>Due Date:</Text> 
-      <Text style={styles.cell}>{item.DueDate}</Text>
-      </View>
-      <View style={styles.row}>
-      <Text style={styles.cellHeader}>Tags:</Text>
-      <Text style={styles.cell}> {item.Tags}</Text>
-      </View>
-      <View style={styles.row}>
-      <Text style={styles.cellHeader}>File: </Text>
-      <Text style={styles.cell}>{item.File}</Text>
-      </View>
+  const updateRow = (index, field, value) => {
+    const updatedMaterial = [...material];
+    updatedMaterial[index][field] = value;
+    setMaterial(updatedMaterial);
+  };
+
+  const deleteTransaction = (id) => {
+    setMaterial(material.filter(item => item.id !== id));
+  };
+
+  
+
+  const renderItem = ({ item, index }) => (
+    <View style={styles.inputContainer}>
+     <Text style={styles.itemText}>💰 material ID: {item.id}</Text>
+           <Text style={styles.itemText}>💲 material Name: {item.name}
+              <TextInput
+                          style={{ height: 0, opacity: 0 }} 
+                          value={item.name} 
+                          editable={false} 
+                        />
+           </Text>
+           <Text style={styles.itemText}>💲 material Amount Neede: {item.amount}
+              <TextInput
+                          style={{ height: 0, opacity: 0 }} 
+                          value={item.amount} 
+                          editable={false} 
+                        />
+           </Text>
+           <Text style={styles.itemText}>💲 material Price Per Amount: {item.price}
+              <TextInput
+                          style={{ height: 0, opacity: 0 }} 
+                          value={item.price} 
+                          editable={false} 
+                        />
+           </Text>
+           <Text style={styles.itemText}>💲 material Total Amount: {item.total}
+              <TextInput
+                          style={{ height: 0, opacity: 0 }} 
+                          value={item.total} 
+                          editable={false} 
+                        />
+           </Text>
+           <Text style={styles.itemText}>💲 Finance Feedback Status: {item.Status}
+              <TextInput
+                          style={{ height: 0, opacity: 0 }} 
+                          value={item.Status} 
+                          editable={false} 
+                        />
+           </Text>
+           
+ 
+      <TouchableOpacity onPress={() => deleteTransaction(item.id)} style={styles.deleteButton}>
+        <Ionicons name="trash" size={24} color="red" />
+      </TouchableOpacity>
     </View>
   );
 
   return (
     <View style={styles.container}>
+      <Text>Material Reports</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#9A340C" />
-      ) : clients.length > 0 ? (
+      ) : material.length > 0 ? (
         <FlatList
-          data={clients}
+          data={material}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           contentContainerStyle={styles.listContainer}
         />
       ) : (
-        <Text style={styles.noDataText}>No clients available</Text>
+        <Text style={styles.noDataText}>No Material available</Text>
       )}
+
+      <View style={styles.container}>
+     
+
+        {message ? <Text style={styles.message}>{message}</Text> : null}
+      </View>
     </View>
   );
 };
 
-export default Client;
+export default Report;
 
 const styles = StyleSheet.create({
-
-  clientCard: {
-    backgroundColor: '#f9f9f9',
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 8,
-    elevation: 1,
-  },
-  tableContainer: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
-    margin: 10,
-    padding: 10,
-  },
-  clientTask: { fontSize: 18, fontWeight: 'bold' },
-  clientStatus: { marginTop: 8, color: '#555' },
-  clientAssignees: { marginTop: 8, color: '#555' },
-  clientDueDate: { marginTop: 8, color: '#555' },
-  clientTags: { marginTop: 8, color: '#555' },
-  clientFile: { marginTop: 8, color: '#555' },
-  noDataText: {
-    fontSize: 16,
-    color: '#9A340C',
-    marginTop: 20,
-  },
-  row: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    paddingVertical: 8,
-  },
-  cellHeader: {
-    flex: 0,
-    fontWeight: 'bold',
-    paddingHorizontal: 5,
-  },
-  cell: {
-    flex:0,
-    paddingHorizontal: 5,
-
+  container: { flex: 1, backgroundColor: '#F7E4DE', padding: 16 },
+  inputContainer: { backgroundColor: '#fff', padding: 16, borderRadius: 8, marginBottom: 16 },
+  input: { height: 40, borderBottomWidth: 1, marginBottom: 10, paddingHorizontal: 8 },
+  picker: { width: '100%', backgroundColor: '#fff', marginVertical: 8 },
+  fileButton: { backgroundColor: '#eee1f1', padding: 1, borderRadius: 8, marginVertical: 8,borderColor:'black', },
+  message: { marginTop: 10, color: 'white', fontWeight: 'bold' },
+  deleteButton: {
+    marginTop: 10,
   },
 });

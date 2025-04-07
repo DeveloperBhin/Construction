@@ -42,51 +42,15 @@ const Home = () => {
       
      
       </View>
-      <View style={styles.Manage}>
-        <Text >Manage Manager Report</Text>
-        <View style={styles.user}>
-        <TouchableOpacity  >
-       
-      <Link href='sitesupevisor/workerreport'  >
-      <Image style={styles.client} />{'\n'}
-      <Text style={styles. clienttext}>Worker</Text>
-     
-
-
-  
-     </Link>
-      </TouchableOpacity>
-      <TouchableOpacity  >
-       
-       <Link href='sitesupevisor/Material'  >
-       <Image style={styles.client} />{'\n'}
-       <Text style={styles. clienttext}>Material</Text>
-   
-      </Link>
-       </TouchableOpacity>
-       <TouchableOpacity  >
-       
-       <Link href='sitesupevisor/Payments'  >
-       <Image style={styles.client}  />{'\n'}
-       <Text style={styles. clienttext}>Finance</Text>
- 
-      </Link>
-       </TouchableOpacity>
-     
-      </View>
       
-      
-      
-     
-      </View>
       <View style={styles.Manage}>
         <Text >Manage Finance Report</Text>
         <View style={styles.user}>
         <TouchableOpacity  >
        
-      <Link href='sitesupevisor/workerreport'  >
+      <Link href='sitesupevisor/MaterialReport'  >
       <Image style={styles.client} />{'\n'}
-      <Text style={styles. clienttext}>Worker</Text>
+      <Text style={styles. clienttext}>MaterialReport</Text>
      
 
 
@@ -95,20 +59,13 @@ const Home = () => {
       </TouchableOpacity>
       <TouchableOpacity  >
        
-       <Link href='sitesupevisor/Material'  >
+       <Link href='sitesupevisor/BudgetReport'  >
        <Image style={styles.client} />{'\n'}
-       <Text style={styles. clienttext}>Material</Text>
+       <Text style={styles. clienttext}>BudgetReport</Text>
    
       </Link>
        </TouchableOpacity>
-       <TouchableOpacity  >
-       
-       <Link href='sitesupevisor/Payments'  >
-       <Image style={styles.client}  />{'\n'}
-       <Text style={styles. clienttext}>Finance</Text>
- 
-      </Link>
-       </TouchableOpacity>
+    
      
       </View>
       

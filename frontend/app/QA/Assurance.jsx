@@ -9,26 +9,48 @@ const Home = () => {
   return (
     
     <View style={styles.container}>
-     
+      
     
-    <View style={styles.welcome}>
-      <Text style={styles.Text}> WELCOME</Text>
-      <View style={styles.button}>
-        <Text style={styles.Pname}>Project Name:</Text>
-        <Text style={styles.Pcode}>Project Code:</Text>
-      </View>
-
-    
-
-      </View>
+  
       <View style={styles.Manage}>
-        <Text >Manage Users</Text>
+        <Text >Manage Worker Report</Text>
         <View style={styles.user}>
         <TouchableOpacity  >
        
-      <Link href='sitesupevisor/Report/'  >
-      <Image style={styles.client} source={require('../../../assets/images/public-relation.png')} />{'\n'}
-      <Text style={styles. clienttext}>Reports</Text>
+      <Link href='QA/Material'  >
+      <Image style={styles.client} />{'\n'}
+      <Text style={styles. clienttext}>Material</Text>
+     
+
+
+  
+     </Link>
+      </TouchableOpacity>
+    
+       <TouchableOpacity  >
+       
+       <Link href='QA/Createreport'  >
+       <Image style={styles.client}  />{'\n'}
+       <Text style={styles. clienttext}>Worker</Text>
+ 
+      </Link>
+       </TouchableOpacity>
+     
+      </View>
+      
+      
+      
+     
+      </View>
+      
+      <View style={styles.Manage}>
+        <Text >Manage Finance Report</Text>
+        <View style={styles.user}>
+        <TouchableOpacity  >
+       
+      <Link href='sitesupevisor/MaterialReport'  >
+      <Image style={styles.client} />{'\n'}
+      <Text style={styles. clienttext}>MaterialReport</Text>
      
 
 
@@ -37,31 +59,17 @@ const Home = () => {
       </TouchableOpacity>
       <TouchableOpacity  >
        
-       <Link href='sitesupevisor/Material'  >
-       <Image style={styles.Finance} source={require('../../../assets/images/profit.png')} />{'\n'}
-       <Text style={styles. clienttext}>Requests</Text>
+       <Link href='sitesupevisor/BudgetReport'  >
+       <Image style={styles.client} />{'\n'}
+       <Text style={styles. clienttext}>BudgetReport</Text>
    
       </Link>
        </TouchableOpacity>
-       
+    
      
       </View>
       
-      <View style={styles.user}>
-        
-      <TouchableOpacity  >
-              
-              <Link href='sitesupevisor/Project'  >
-              <Image style={styles.Finance} source={require('../../../assets/images/quality-assurance.png')} />{'\n'}
-              <Text style={styles. clienttext}>Monitor Project </Text>
-          
-             </Link>
-              </TouchableOpacity>      
-            
       
-      
-     
-      </View>
       
      
       </View>
@@ -69,6 +77,7 @@ const Home = () => {
     </View>
     
   )
+  
 }
 
 export default Home
@@ -185,8 +194,8 @@ export default Home
     Manage:{
       marginTop:100,
       backgroundColor:'white',
-      width:'80%',
-      marginLeft:30,
+      width:'96%',
+      marginLeft:5,
       justifyContent:'center',
       alignItems:'center',
       paddingLeft:60,
@@ -201,9 +210,9 @@ export default Home
 
     },
     client:{
-      width:'55%',
+      width:'45%',
       resizeMode:'cover',
-      height:'70%',
+      height:'65%',
       borderRadius:50,
       borderWidth:2,
       borderColor:'brown',

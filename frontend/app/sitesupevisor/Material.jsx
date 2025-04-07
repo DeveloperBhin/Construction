@@ -4,11 +4,12 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { use } from 'react';
 import { FlatList } from 'react-native';
 
+
 export default function DynamicInputFields() {
   const [numFields, setNumFields] = useState(0);
   const [values, setValues] = useState([]);
-  const[pricePerQuantity,setpricePerQuantity]=useState('');
-  const[TotalAmount,setTotalAmount] = useState('');
+  const[price,setpricePerQuantity]=useState('');
+  const[total,setTotalAmount] = useState('');
   const [date, setDate] = useState('');
   const [message, setMessage] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -21,7 +22,7 @@ export default function DynamicInputFields() {
     setValues((prevValues) => {
       const newValues = [...prevValues.slice(0, count)];
       while (newValues.length < count) {
-        newValues.push({ name: '', amount: '',price: '',Total:'' });
+        newValues.push({ name: '', amount: '',price: '',total:'' });
       }
       return newValues;
     });
@@ -40,7 +41,7 @@ export default function DynamicInputFields() {
       setMessage('Please select a date.');
       return;
     }
-    if (values.some(({ name, amount , price , Total }) => !name.trim() || !amount.trim() || !price.trim() || !Total.trim())) {
+    if (values.some(({ name, amount , price , total }) => !name.trim() || !amount.trim() || !price.trim() || !total.trim())) {
       setMessage('Please fill in all fields before submitting.');
       return;
     }
@@ -48,29 +49,31 @@ export default function DynamicInputFields() {
     setMessage('');
 
     
-    const formattedData = values.map(({ name, amount , price , Total }) => ({
+    const formattedData = values.map(({ name, amount , price , total }) => ({
       date,
       name: name.trim(),
-      amount: amount.trim(),
+      amount: amount.trim(), 
       price: price.trim(),
-      Total:Total.trim(),
+      total:total.trim(),
     }));
+  
     
     try {
       const response = await fetch('http://192.168.167.150:8000/SupervisorRequest/', {
         method: 'POST',
         headers: {
-          "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
-          'Content-Type': 'application/json',
+          "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482", 'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formattedData), 
+        body: JSON.stringify({ supervisorform: formattedData }),
+
       });
     
       if (response.ok) {
         setMessage('Fields submitted successfully!');
         setNumFields(0);
         setValues([]);
-        setpricePerQuantity()
+        setpricePerQuantity('');
+        setTotalAmount('');
         setDate('');
       } else {
         const errorData = await response.json();
@@ -103,7 +106,7 @@ export default function DynamicInputFields() {
         />
       )}
 
-      {/* Number of Fields Input */}
+      
    <TextInput 
         keyboardType="numeric" 
         placeholder="Enter number of fields" 
@@ -136,14 +139,14 @@ export default function DynamicInputFields() {
               keyboardType="numeric" 
               style={styles.textInput} 
             />
-              <TextInput 
+               <TextInput 
               placeholder={`Total Amount ${index + 1}`} 
-              value={item.Total} 
-              onChangeText={(text) => handleFieldChange(index, 'Total', text)} 
+              value={item.total} 
+              onChangeText={(text) => handleFieldChange(index, 'total', text)} 
               keyboardType="numeric" 
               style={styles.textInput} 
             />
-            
+             
           </View>
           
         )
@@ -151,22 +154,21 @@ export default function DynamicInputFields() {
       />
       
 
-      {/* Submit Button */}
       <Button title="Submit" onPress={handleSubmit} />
 
-      {/* Message Display */}
+     
       {message ? <Text style={styles.message}>{message}</Text> : null}
     </View>
   );
 }
 
-// Styles
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F7E4DE', padding: 16 },
-  title: { fontWeight: 'bold', fontSize: 20, textAlign: 'center', marginBottom: 10 },
-  textInput: { borderWidth: 1, borderColor: '#ccc', padding: 10, marginVertical: 10, borderRadius: 5 },
-  inputContainer: { marginBottom: 20 },
-  scrollContainer: { marginBottom: 20 },
-  message: { color: 'red', textAlign: 'center', marginTop: 10 },
+  inputContainer: { backgroundColor: '#fff', padding: 16, borderRadius: 8, marginBottom: 16 },
+  input: { height: 40, borderBottomWidth: 1, marginBottom: 10, paddingHorizontal: 8 },
+  picker: { width: '100%', backgroundColor: '#fff', marginVertical: 8 },
+  fileButton: { backgroundColor: '#eee1f1', padding: 1, borderRadius: 8, marginVertical: 8,borderColor:'black', },
+  message: { marginTop: 10, color: 'white', fontWeight: 'bold' },
 });
 

@@ -34,11 +34,10 @@ const MaterialUsage = () => {
       formData.append('Remaining', parseFloat(Remaining) || 0); // Ensure numeric value, fallback to 0
       formData.append('Usage_date', Usage_date);
 
-      const response = await fetch('http://192.168.165.150:8000/WorkerMaterialUsage/', {
+      const response = await fetch('http://192.168.167.150:8000/WorkerMaterialUsage/', {
         method: 'POST',
         headers: {
-          "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
-          'Content-Type': 'multipart/form-data'
+          "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482", 'Content-Type': 'multipart/form-data'
         },
         body: formData
       });

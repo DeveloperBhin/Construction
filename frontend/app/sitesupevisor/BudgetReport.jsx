@@ -19,10 +19,10 @@ const Budget = () => {
   const fetchBudget = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://192.168.167.150:8000/register-into-existing-project/', {
+      const response = await fetch('http://192.168.167.150:8000/FinanceBudget/', {
         method: 'GET',
         headers: {
-           "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482",'Content-Type': 'application/json'
+            "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482",  'Content-Type': 'application/json'
         }
       });
       const data = await response.json();
@@ -55,84 +55,17 @@ const Budget = () => {
   };
 
 
-  const handleQualityAssurance = async () => {
-    if (budget.length === 0 || budget.some(item => !item.Status  )) {
-      setMessage("Please fill in all fields before submitting.");
-      return;
-    }
-
-    setLoading(true);
-    setMessage('');
-
-    try {
-      const response = await fetch('http://192.168.167.150:8000/QualityAssurance/', {
-        method: 'POST',
-        headers: {
-          "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482", "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ materialform: budget })
-      });
-
-      if (response.ok) {
-        setMessage("Budget submitted successfully!");
-        navigation.navigate('Finance/(tabs)', { screen: 'Home' });
-      } else {
-        const errorData = await response.json();
-        setMessage(errorData.message || "An error occurred.");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      setMessage("An error occurred while submitting reports.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const renderBudgetItem = ({ item, index }) => (
     <View style={styles.card}>
-      <Text style={styles.itemText}>💰 material ID: {item.id}
-       
-      </Text>
-      <Text style={styles.itemText}>💲 Worker Name: {item.name}
-        <TextInput
-              style={{ height: 0, opacity: 0 }} 
-              value={item.name} 
-              editable={false} 
-            />
-      </Text>
-      <Text style={styles.itemText}>💲 Worker Email: {item.email}
-        <TextInput
-              style={{ height: 0, opacity: 0 }} 
-              value={item.email} 
-              editable={false} 
-            />
-      </Text>
-      <Text style={styles.itemText}>💲 Worker Contact: {item.phone}
-        <TextInput
-              style={{ height: 0, opacity: 0 }} 
-              value={item.phone}
-              editable={false} 
-            />
-      </Text>
-      <Text style={styles.itemText}>💲 Specialization: {item.TypeOfWork}
-        <TextInput
-              style={{ height: 0, opacity: 0 }} 
-              value={item.TypeOfWork} 
-              editable={false} 
-            />
-      </Text>
+      <Text style={styles.itemText}>💰 Budget ID: {item.id}</Text>
+      <Text style={styles.itemText}>💲 Budget Name: {item.BudgetName}</Text>
+      <Text style={styles.itemText}>💲 Budget Total Budget: {item.Totalbudget}</Text>
+      <Text style={styles.itemText}>💲 Budget Amount Spent: {item.AmountSpent}</Text>
+      <Text style={styles.itemText}>💲 Budget Remaining: {item.remainingbudget}</Text>
+      <Text style={styles.itemText}>💲 Comments: {item.comments}</Text>
       
 
-      <Picker
-        selectedValue={item.Status}
-        style={styles.picker}
-        onValueChange={(itemValue) => updateRow(index, 'Status', itemValue)}
-      >
-        <Picker.Item label='Passed' value='Passed' />
-        <Picker.Item label='Failed' value='Failed' />
-       
-      </Picker>
-      
+     
 
       <TouchableOpacity onPress={() => deleteTransaction(item.id)} style={styles.deleteButton}>
         <Ionicons name="trash" size={24} color="red" />
@@ -164,11 +97,7 @@ const Budget = () => {
 
      
 
-      {loading ? (
-        <ActivityIndicator size="large" color="#D84315" />
-      ) : (
-        <Button title="Submit" onPress={handleQualityAssurance} />
-      )}
+     
       {message ? <Text style={styles.message}>{message}</Text> : null}
     </View>
   );

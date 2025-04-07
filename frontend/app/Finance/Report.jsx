@@ -1,349 +1,246 @@
-import { StyleSheet, Text, View, FlatList, ActivityIndicator,TouchableOpacity,TextInput,Button ,Image} from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { Link } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons'; 
+import { StyleSheet, Text, View ,Image,TouchableOpacity,} from 'react-native'
+import React from 'react'
+import { Link } from 'expo-router'
+import { Button } from 'react-native';
 
 
-const Report = () => {
-  const[TotalBudget,setTotalBudget] = useState('');
-  const[Totalexpenses,setTotalexpenses] = useState('');
-  const[variance,setVariance] = useState('');
-  const[Notes,setNotes] = useState('');
-  const[Remark,setRemark] = useState('');
-  const[generated_at,setGenerated_at] = useState('')
-  const [message, setMessage] = useState('');
-  const deleteTransaction = (id) => {
-    setCategory(category.filter(item => item.id !== id));
-  };
-  
-  const [loading, setLoading] = useState(false); 
-  const navigation=useNavigation(); 
 
- const [category, setCategory] = useState([]);
- 
-   useEffect(() => {
-     fetchCategory();
-   }, []);
- 
-   const fetchCategory = async () => {
-     setLoading(true);
- 
-     try {
-         const response = await fetch('http://192.168.167.150:8000/finance/', {
-           method: 'GET',
-           headers: { 
-             "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
-             'Content-Type': 'application/json' },
-    
-         });
-         const data = await response.json();
-         const updatedData = data.map(item => ({
-          ...item,
-          TotalBudget: '',
-          Totalexpenses: '',
-          variance: '',
-          Remark: '',
-          Notes:'',
-        }));
-  
-         setCategory(updatedData);
-       } catch (error) {
-       console.error("Error fetching report name:", error);
-     } finally {
-       setLoading(false);
-     }
-   };
-   const updateRow = (index, field, value) => {
-    const updatedCategory = [...category];
-    updatedCategory[index][field] = value;
-    setCategory(updatedCategory);
-  };
- 
-     
- 
-   
-  const handleFinancereport = async () => {
-    const isEmpty = category.some(item => 
-      item.TotalBudget.trim() === '' || 
-      item.Totalexpenses.trim() === '' || 
-      item.variance.trim() === '' || 
-     item.Notes.trim() ==='' ||
-     item.Remark.trim() === ''
-      
-  );
-
-  if (category.length === 0 || isEmpty) {
-      setMessage("Please fill in all fields before submitting.");
-      return;
-  }
-    setLoading(true);
-    setMessage('');
-
-    // Prepare the data in the correct format
-  
-    try {
-        const response = await fetch('http://192.168.167.150:8000/financereport/', {
-            method: 'POST',
-            headers: { 
-                "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({reports:category}),  
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            setMessage("Reports submitted successfully!");
-            navigation.navigate('Finance/(tabs)', { screen: 'Home' });
-        } else {
-            const errorData = await response.json();
-            setMessage(errorData.message || "An error occurred.");
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        setMessage("An error occurred while submitting reports.");
-    } finally {
-        setLoading(false);
-    }
-};
-  
- // Render Each Row Independently
-const renderItem = ({ item, index }) => (
-  <View style={styles.inputContainer}>
-    <Text style={styles.cell}>{item.Reportname}
-    <TextInput
-      style={{ height: 0, opacity: 0 }} // Makes it hidden
-      value={item.Reportname} // Keeps the name stored in input
-      editable={false} // Prevents user from editing
-    />
-
-    </Text>
-    
-    <TextInput
-  style={styles.input}
-  placeholder="TotalBudget"
-  keyboardType="numeric"
-  value={item.TotalBudget}
-  onChangeText={(text) => {
-    setTotalBudget(text);  
-    updateRow(index, 'TotalBudget', text);  
-  }}
-/>
-    <TextInput
-      style={styles.input}
-      placeholder="TotalExpenses"
-      keyboardType="numeric"
-      value={item.Totalexpenses}
-      onChangeText={(text) =>{ setTotalexpenses(text);  updateRow(index, 'Totalexpenses', text);}}
-    />
-    <TextInput
-      style={styles.input}
-      placeholder="Remaining"
-      keyboardType="numeric"
-      value={item.variance}
-      onChangeText={(text) =>{ setVariance(text);  updateRow(index, 'variance', text);}}
-    />
-    <TextInput
-      style={styles.input}
-      placeholder="Remark"
-      value={item.Remark}
-      onChangeText={(text) => { setRemark(text); updateRow(index, 'Remark', text);}}
-    />
-      <TextInput
-      style={styles.input}
-      placeholder="Notes"
-      value={item.Notes}
-      onChangeText={(text) => { setNotes(text); updateRow(index, 'Notes', text);}}
-    />
-      <TouchableOpacity onPress={() => deleteTransaction(item.id)} style={styles.deleteButton}>
-          <Ionicons name="trash" size={24} color="red" />
-        </TouchableOpacity>
-  </View>
-  
-);
+const Home = () => {
   return (
-    <View style={styles.container}>
-  <Text style={styles.repot}>Create A report</Text>
-   
-      {loading ? (
-        <ActivityIndicator size="large" color="#9A340C" />
-      ) : category.length > 0 ? (
-        <FlatList
-          data={category}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderItem}
-          contentContainerStyle={styles.listContainer}
-        />
-      ) : (
-        <Text style={styles.noDataText}>No Category available</Text>
-      )}
-
-      <View >
     
+    <View style={styles.container}>
       
-      <TouchableOpacity style={styles.button1}>
-        <Link href='Finance/Addcategory'>Add Report</Link>
+    
+  
+      <View style={styles.Manage}>
+        <Text >Manage Worker Report</Text>
+        <View style={styles.user}>
+        <TouchableOpacity  >
+       
+      <Link href='Finance/workerreport'  >
+      <Image style={styles.client} />{'\n'}
+      <Text style={styles. clienttext}>MaterialReport</Text>
+     
+
+
+  
+     </Link>
       </TouchableOpacity>
-
-        {loading ? (
-          <ActivityIndicator size="large" color="#D84315" />
-        ) : (
-          <Button title="Submit" onPress={handleFinancereport} />
-        )}
-
-        {message ? <Text style={styles.message}>{message}</Text> : null}
-
-        
+    
+       <TouchableOpacity  >
+       
+       <Link href='Finance/Attendancereport'  >
+       <Image style={styles.client}  />{'\n'}
+       <Text style={styles. clienttext}>Attendance Report</Text>
+ 
+      </Link>
+       </TouchableOpacity>
+     
       </View>
       
-    </View>
-  );
-};
-
-export default Report;
-
-const styles = StyleSheet.create({
-  container: {
-    
-    padding: 10,
-  },
-  repot:{
-    fontWeight:'bold',
-    justifyContent:'center',
-    textAlign:'center'
-
-  },
-  add:{
-    color:'red'
-
-  },
-  logo:{
-      
-    marginTop:0,
-    width:40,
-    height:40,
-    marginLeft:150,
-
-  },
-  Pname:{
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBlockStart:1
-
-  },
-  Pcode:{
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBlockEnd:0
-
-  },
-  button:{
-    fontSize: 18,
-    fontWeight: 'bold',
-    backgroundColor: '#9A340C',
-    height:60,
-    
-    
-    
-    borderRadius:8,
-    paddingHorizontal:10,
-    paddingVertical:15,
-    width:'100%',
-
-    borderColor:'white',
-    borderWidth:1,
-    flexDirection:'row',
-    justifyContent:'space-between',
-
-    
-    
-
-  },
-  tableContainer: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
-    margin: 10,
-    padding: 10,
-  },
-  row: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    paddingVertical: 8,
-  },
-  cellHeader: {
-    fontWeight: 'bold',
-    paddingHorizontal: 5,
-  },
-  cell: {
-    paddingHorizontal: 5,
-  },
-  button1: {
-    backgroundColor: '#E44D26',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  listContainer: {
-    paddingBottom: 20,
-  },
-  noDataText: {
-    fontSize: 16,
-    color: '#9A340C',
-    marginTop: 20,
-    textAlign: 'center',
-  },
- 
-  message: {
-    marginTop: 10,
-    color: 'red',
-    textAlign: 'center',
-  },
-  
-   
-    cell: {
-      width: 80, // Adjust this width as per your requirement
-      fontWeight: 'bold',
-      marginRight: 5,
-    },
-    input: {
       
       
-      borderColor: '#ccc',
      
-      borderRadius: 5,
-      marginHorizontal:1,
-      fontSize:8,
-      textAlign:'center'
-    },
-    inputContainer: {
-      alignItems: 'center',
-      marginBottom: 10,
-    },
-    placeholderText: {
-      textAlign: 'center',
-      fontSize: 14,
-      fontWeight: 'bold',
-      color: 'gray',
-    },
-    com:{
+      </View>
       
-      borderWidth: 1,
-      borderColor: '#ccc',
-      paddingHorizontal: 8,
-      paddingVertical: 14,
-      borderRadius: 5,
-      marginHorizontal: 15,
-      fontSize:16,
+      <View style={styles.Manage}>
+        <Text >Manage Finance Report</Text>
+        <View style={styles.user}>
+        <TouchableOpacity  >
+       
+      <Link href='Finance/MaterialReport'  >
+      <Image style={styles.client} />{'\n'}
+      <Text style={styles. clienttext}>MaterialReport</Text>
+     
+
+
+  
+     </Link>
+      </TouchableOpacity>
+      <TouchableOpacity  >
+       
+       <Link href='Finance/BudgetReport'  >
+       <Image style={styles.client} />{'\n'}
+       <Text style={styles. clienttext}>BudgetReport</Text>
+   
+      </Link>
+       </TouchableOpacity>
+    
+     
+      </View>
+      
+      
+      
+     
+      </View>
+  
+    </View>
+    
+  )
+  
+}
+
+export default Home
+
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,   // Ensures full screen
+    
+      backgroundColor: '#F7E4DE',
+    },
+    Text: {
+      fontSize: 18,
+    fontWeight: 'bold',
+    color: 'black',
+    textAlign: 'center',
+    },
+    Text1: {
+      fontSize: 18,
+    fontWeight: 'bold',
+    color: '#9A340C',
+    textAlign: 'center',
+    },
+    
+
+    logo:{
+      
+      marginTop:0,
+      width:40,
+      height:40,
+      marginLeft:150,
+
+    },
+  image:{
+      width:'100%',
+      resizeMode:'cover',
+    height:300,
+
+      marginTop:50,
+      
+     
+    },
+    Overlay:{
+      position:'absolute',
+      marginTop:180,
+      padding:20,
+      width:'80%',
+      backgroundColor: 'rgba(255, 255, 255, 0.7)',
+      flexDirection:'row',
+      justifyContent:'space-between',
+      borderColor:'white',
+      borderWidth:2,
+      marginLeft:30,
+      
+      
+    },
+
+    button:{
+      fontSize: 18,
+      fontWeight: 'bold',
+      backgroundColor: '#9A340C',
+      height:60,
+      
+      
+      
+      borderRadius:8,
+      paddingHorizontal:10,
+      paddingVertical:5,
+      width:'80%',
+      marginLeft:30,
+      borderColor:'white',
+      borderWidth:1,
+      flexDirection:'row',
+      justifyContent:'space-between',
+
+      
       
 
     },
-    container: { flex: 1, backgroundColor: '#F7E4DE', padding: 16 },
-    inputContainer: { backgroundColor: '#fff', padding: 16, borderRadius: 8, marginBottom: 16 },
-    input: { height: 40, borderBottomWidth: 1, marginBottom: 10, paddingHorizontal: 8 },
-    
+    button1:{
+      marginTop:5,
+      backgroundColor: '',
+      height:30,
+      justifyContent:'center',
+      alignItems:'center',
+      borderRadius:8,
+      paddingHorizontal:10,
+      paddingVertical:5,
+      width:'50%',
+      marginLeft:90,
+      
+
+    },
+    welcome:{
+      backgroundColor:'#732303',
+      paddingVertical:60,
+      borderBottomEndRadius:'50%',
+      borderBottomStartRadius:'50%',
+      
+      
+    },
+    Pname:{
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBlockStart:1
+
+    },
+    Pcode:{
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBlockEnd:0
+
+    },
+    Manage:{
+      marginTop:100,
+      backgroundColor:'white',
+      width:'96%',
+      marginLeft:5,
+      justifyContent:'center',
+      alignItems:'center',
+      paddingLeft:60,
+    },
+
+    user:{
+      flexDirection:'row',
+      justifyContent:'space-between',
+      height:100
+
+      
+
+    },
+    client:{
+      width:'45%',
+      resizeMode:'cover',
+      height:'65%',
+      borderRadius:50,
+      borderWidth:2,
+      borderColor:'brown',
+      justifyContent:'center',
+      alignItems:'center',
+      
+   
+      },
+      clienttext:{
+        fontSize: 16,
+        marginTop: 15,
+        justifyContent:'center',
+        alignItems:'center',
+
+
+      },
+      Finance:{
+        width:'55%',
+        resizeMode:'cover',
+        height:'70%',
+      borderRadius:50,
+      borderWidth:2,
+      borderColor:'brown',
+      justifyContent:'center',
+      alignItems:'center',
+      
+     
+        },
+        
+
   });
-  

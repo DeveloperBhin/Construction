@@ -23,7 +23,7 @@ const CreateProjectScreen = () => {
         setWorkOptions(data); // Assuming API returns a list of project names
       } catch (error) {
         console.error('Error fetching projects:', error);
-        setMessage('Failed to fetch work types.');
+        setMessage();
       }
     };
 

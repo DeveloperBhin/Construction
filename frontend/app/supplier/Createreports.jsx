@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableOpacity, 
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import {Picker} from '@react-native-picker/picker'
 
 const Report = () => {
   const [material, setMaterial] = useState([]);
@@ -16,11 +17,10 @@ const Report = () => {
   const fetchMaterial = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://192.168.165.150:8000/FinanceMaterial/', {
+      const response = await fetch('http://192.168.167.150:8000/FinanceMaterial/', {
         method: 'GET',
         headers: {
-          "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
-          'Content-Type': 'application/json',
+          "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482", 'Content-Type': 'application/json',
         },
       });
       const data = await response.json();
@@ -53,6 +53,7 @@ const Report = () => {
       item.Quantity_Needed === '' || 
       item.Quantity_Available === '' ||
       item.price_Per_Quantity === '' || 
+      item.SupplierStatus === '' ||
       item.Total_Amount === ''
     );
 
@@ -67,8 +68,7 @@ const Report = () => {
       const response = await fetch('http://192.168.167.150:8000/SupplierReport/', {
         method: 'POST',
         headers: {
-          "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
-          "Content-Type": "application/json",
+          "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482", "Content-Type": "application/json",
         },
         body: JSON.stringify({ supplierform: material }),
       });
@@ -76,7 +76,7 @@ const Report = () => {
       if (response.ok) {
         const data = await response.json();
         setMessage("Form submitted successfully!");
-        navigation.navigate('Finance/(tabs)', { screen: 'Home' });
+        navigation.navigate('supplier/(tabs)', { screen: 'Home' });
       } else {
         const errorData = await response.json();
         setMessage(errorData.message || "An error occurred.");
@@ -91,10 +91,43 @@ const Report = () => {
 
   const renderItem = ({ item, index }) => (
     <View style={styles.inputContainer}>
-      <Text style={styles.itemText}>💰 Material Quantity Needed: {item.QuantityNeeded}</Text>
-      <Text style={styles.itemText}>💲 Material Price Per Quantity: {item.pricePerQuantity}</Text>
-      <Text style={styles.itemText}>💲 Material Total Amount: {item.TotalAmount}</Text>
-
+     <Text style={styles.itemText}>💰 material ID: {item.id}</Text>
+           <Text style={styles.itemText}>💲 material Name: {item.name}
+              <TextInput
+                          style={{ height: 0, opacity: 0 }} 
+                          value={item.name} 
+                          editable={false} 
+                        />
+           </Text>
+           <Text style={styles.itemText}>💲 material Amount Neede: {item.amount}
+              <TextInput
+                          style={{ height: 0, opacity: 0 }} 
+                          value={item.amount} 
+                          editable={false} 
+                        />
+           </Text>
+           <Text style={styles.itemText}>💲 material Price Per Amount: {item.price}
+              <TextInput
+                          style={{ height: 0, opacity: 0 }} 
+                          value={item.price} 
+                          editable={false} 
+                        />
+           </Text>
+           <Text style={styles.itemText}>💲 material Total Amount: {item.total}
+              <TextInput
+                          style={{ height: 0, opacity: 0 }} 
+                          value={item.total} 
+                          editable={false} 
+                        />
+           </Text>
+           <Text style={styles.itemText}>💲 Finance Feedback Status: {item.Status}
+              <TextInput
+                          style={{ height: 0, opacity: 0 }} 
+                          value={item.Status} 
+                          editable={false} 
+                        />
+           </Text>
+           
       <TextInput
         style={styles.input}
         placeholder="Quantity Needed"
@@ -123,7 +156,16 @@ const Report = () => {
         value={item.Total_Amount}
         onChangeText={(text) => updateRow(index, 'Total_Amount', text)}
       />
-
+ <Picker
+        selectedValue={item.SupplierStatus}
+        style={styles.picker}
+        onValueChange={(itemValue) => updateRow(index, 'SupplierStatus', itemValue)}
+      >
+        <Picker.Item label='Pending' value='Pending' />
+        <Picker.Item label='Approved' value='Approved' />
+        <Picker.Item label='Rejected' value='Rejected' />
+     
+      </Picker>
       <TouchableOpacity onPress={() => deleteTransaction(item.id)} style={styles.deleteButton}>
         <Ionicons name="trash" size={24} color="red" />
       </TouchableOpacity>
@@ -162,37 +204,12 @@ const Report = () => {
 export default Report;
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-  },
-  itemText: {
-    fontSize: 14,
-    marginVertical: 5,
-  },
-  input: {
-    height: 40,
-    borderBottomWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 8,
-    fontSize: 14,
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  listContainer: {
-    paddingBottom: 20,
-  },
-  noDataText: {
-    fontSize: 16,
-    color: '#9A340C',
-    marginTop: 20,
-    textAlign: 'center',
-  },
-  message: {
-    marginTop: 10,
-    color: 'red',
-    textAlign: 'center',
-  },
+  container: { flex: 1, backgroundColor: '#F7E4DE', padding: 16 },
+  inputContainer: { backgroundColor: '#fff', padding: 16, borderRadius: 8, marginBottom: 16 },
+  input: { height: 40, borderBottomWidth: 1, marginBottom: 10, paddingHorizontal: 8 },
+  picker: { width: '100%', backgroundColor: '#fff', marginVertical: 8 },
+  fileButton: { backgroundColor: '#eee1f1', padding: 1, borderRadius: 8, marginVertical: 8,borderColor:'black', },
+  message: { marginTop: 10, color: 'white', fontWeight: 'bold' },
   deleteButton: {
     marginTop: 10,
   },

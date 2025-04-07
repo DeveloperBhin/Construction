@@ -27,8 +27,7 @@ const Report = () => {
          const response = await fetch('http://192.168.167.150:8000/finance/', {
            method: 'GET',
            headers: { 
-             "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
-             'Content-Type': 'application/json' },
+            "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482", 'Content-Type': 'application/json' },
     
          });
          const data = await response.json();
@@ -80,8 +79,7 @@ const Report = () => {
         const response = await fetch('http://192.168.167.150:8000/financereport/', {
             method: 'POST',
             headers: { 
-                "Authorization": "Token 0103de006028cef3dff84acc0295e5e2e36395ba",
-                "Content-Type": "application/json"
+              "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482",  "Content-Type": "application/json"
             },
             body: JSON.stringify({reports:category,comments}),  
         });
