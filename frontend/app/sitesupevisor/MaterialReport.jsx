@@ -19,7 +19,7 @@ const Budget = () => {
   const fetchBudget = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://192.168.167.150:8000/FinanceMaterial/', {
+      const response = await fetch('http://192.168.1.150:8000/FinalReport/', {
         method: 'GET',
         headers: {
             "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482", 'Content-Type': 'application/json'
@@ -61,14 +61,22 @@ const Budget = () => {
     <View style={styles.card}>
       <Text style={styles.itemText}>💰 material ID: {item.id}</Text>
       <Text style={styles.itemText}>💲 material Name: {item.name}</Text>
-      <Text style={styles.itemText}>💲 material Amount Neede: {item.amount}</Text>
+      <Text style={styles.itemText}>💲 material Amount Needed: {item.amount}</Text>
       <Text style={styles.itemText}>💲 material Price Per Amount: {item.price}</Text>
       <Text style={styles.itemText}>💲 material Total Amount: {item.total}</Text>
-      <Text style={styles.itemText}>💲 Finance Feedback Status: {item.Status}</Text>
+      <Text style={styles.itemText}>💲 Quality Assurance Feedback Status: {item.Status}</Text>
+      <Text>Supplier Feedbacks</Text>
+      <Text style={styles.itemText}>💰 material Quantity_Needed: {item.Quantity_Needed}</Text>
+      <Text style={styles.itemText}>💲 material Quantity_Available: {item.Quantity_Available}</Text>
+      <Text style={styles.itemText}>💲 material Price per Quantity: {item.price_Per_Quantity}</Text>
+      <Text style={styles.itemText}>💲 material Total Price: {item.Total_Price}</Text>
+      <Text style={styles.itemText}>💲 Supplier Status: {item.SupplierStatus}</Text>
+     <Text> Finance Feedback</Text>
+      <Text style={styles.itemText}>💲 Finance Feedback Status: {item.FinalStatus}</Text>
       
 
      
-      
+    
 
       <TouchableOpacity onPress={() => deleteTransaction(item.id)} style={styles.deleteButton}>
         <Ionicons name="trash" size={24} color="red" />

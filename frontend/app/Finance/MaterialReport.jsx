@@ -19,7 +19,7 @@ const Budget = () => {
   const fetchBudget = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://192.168.167.150:8000/SupplierReport/', {
+      const response = await fetch('http://192.168.1.150:8000/SupplierReport/', {
         method: 'GET',
         headers: {
             "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482", 'Content-Type': 'application/json'
@@ -54,23 +54,126 @@ const Budget = () => {
     );
   };
 
+  const handleQualityAssurance = async () => {
+    if (budget.length === 0 || budget.some(item => !item.Status  )) {
+      setMessage("Please fill in all fields before submitting.");
+      return;
+    }
 
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const response = await fetch('http://192.168.1.150:8000/FinalReport/', {
+        method: 'POST',
+        headers: {
+          "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482", "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ Finalform: budget })
+      });
+
+      if (response.ok) {
+        setMessage("Budget submitted successfully!");
+        navigation.navigate('Finance/(tabs)', { screen: 'Home' });
+      } else {
+        const errorData = await response.json();
+        setMessage(errorData.message || "An error occurred.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setMessage("An error occurred while submitting reports.");
+    } finally {
+      setLoading(false);
+    }
+  };
  
 
   const renderBudgetItem = ({ item, index }) => (
     <View style={styles.card}>
       <Text style={styles.itemText}>💰 material ID: {item.id}</Text>
-      <Text style={styles.itemText}>💲 material Name: {item.name}</Text>
-      <Text style={styles.itemText}>💲 material Amount Needed: {item.amount}</Text>
-      <Text style={styles.itemText}>💲 material Price Per Amount: {item.price}</Text>
-      <Text style={styles.itemText}>💲 material Total Amount: {item.total}</Text>
-      <Text style={styles.itemText}>💲 Finance Feedback Status: {item.Status}</Text>
+      <Text style={styles.itemText}>💲 material Name: {item.name}
+        <TextInput
+                      style={{ height: 0, opacity: 0 }} 
+                      value={item.name} 
+                      editable={false} 
+                    />
+      </Text>
+      
+      <Text style={styles.itemText}>💲 material Amount Needed: {item.amount}
+        <TextInput
+                      style={{ height: 0, opacity: 0 }} 
+                      value={item.amount} 
+                      editable={false} 
+                    />
+      </Text>
+      <Text style={styles.itemText}>💲 material Price Per Amount: {item.price}
+        <TextInput
+                      style={{ height: 0, opacity: 0 }} 
+                      value={item.price} 
+                      editable={false} 
+                    />
+      </Text>
+      <Text style={styles.itemText}>💲 material Total Amount: {item.total}
+        <TextInput
+                      style={{ height: 0, opacity: 0 }} 
+                      value={item.total} 
+                      editable={false} 
+                    />
+      </Text>
+      <Text style={styles.itemText}>💲 Quality Assurance Feedback Status: {item.FinalStatus}
+        <TextInput
+                      style={{ height: 0, opacity: 0 }} 
+                      value={item.Status} 
+                      editable={false} 
+                    />
+      </Text>
       <Text>Supplier Report</Text>
-      <Text style={styles.itemText}>💲 material Amount Needed: {item.Quantity_Needed}</Text>
-      <Text style={styles.itemText}>💲 material Amount Available: {item.Quantity_Available}</Text>
-      <Text style={styles.itemText}>💲 material Price Per Quantity: {item.price_Per_Quantity}</Text>
-      <Text style={styles.itemText}>💲 material Total Price: {item.Total_Price}</Text>
-      <Text style={styles.itemText}>💲 Supplier Feedback Status: {item.SupplierStatus}</Text>
+      <Text style={styles.itemText}>💲 material Amount Needed: {item.Quantity_Needed}
+        <TextInput
+                      style={{ height: 0, opacity: 0 }} 
+                      value={item.Quantity_Needed} 
+                      editable={false} 
+                    />
+      </Text>
+      <Text style={styles.itemText}>💲 material Amount Available: {item.Quantity_Available}
+        <TextInput
+                      style={{ height: 0, opacity: 0 }} 
+                      value={item.Quantity_Available} 
+                      editable={false} 
+                    />
+      </Text>
+      <Text style={styles.itemText}>💲 material Price Per Quantity: {item.price_Per_Quantity}
+        <TextInput
+                      style={{ height: 0, opacity: 0 }} 
+                      value={item.price_Per_Quantity} 
+                      editable={false} 
+                    />
+      </Text>
+      <Text style={styles.itemText}>💲 material Total Price: {item.Total_Price}
+        <TextInput
+                      style={{ height: 0, opacity: 0 }} 
+                      value={item.Total_Price} 
+                      editable={false} 
+                    />
+      </Text>
+      <Text style={styles.itemText}>💲 Supplier Feedback Status: {item.SupplierStatus}
+        <TextInput
+                      style={{ height: 0, opacity: 0 }} 
+                      value={item.SupplierStatus} 
+                      editable={false} 
+                    />
+      </Text>
+      <Picker
+              selectedValue={item.FinalStatus}
+              style={styles.picker}
+              onValueChange={(itemValue) => updateRow(index, 'FinalStatus', itemValue)}
+            >
+              <Picker.Item label='Pending' value='Pending' />
+              <Picker.Item label='Approved' value='Approved' />
+              <Picker.Item label='Rejected' value='Rejected' />
+           
+            </Picker>
+            
       
 
      
@@ -103,7 +206,11 @@ const Budget = () => {
       ) : (
         <Text style={styles.noDataText}>No budget available</Text>
       )}
-
+    {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          <Button title="Submit" onPress={handleQualityAssurance} />
+        )}
      
 
     

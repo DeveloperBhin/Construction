@@ -416,9 +416,9 @@ class FinanceTransactionNodetails(APIView):
     permission_classes = [IsAuthenticated]
 
     
-    def get(self, request, pk):
-        number = get_object_or_404(FinanceTransactionsNo, pk=pk)
-        serializer = FinanceTransactionNoSerializer(number)
+    def get(self, request):
+        number = get_object_or_404(FinanceTransactionsNo)
+        serializer = FinanceTransactionNoSerializer(number, many=True)
         return Response(serializer.data)
  
 
@@ -432,9 +432,9 @@ class FinanceTransactionNodetails(APIView):
 class FinanceTransactionView(APIView):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
-    def get(self, request,pk):
-        number = get_object_or_404(FinanceTransaction,pk=pk)
-        serial = FinanceTransactionSerializer(number)
+    def get(self, request):
+        number = FinanceTransaction.objects.all()
+        serial = FinanceTransactionSerializer(number, many=True)
         return Response(serial.data)
  
     def post(self,request):
@@ -585,23 +585,23 @@ class WorkerMaterialUsagedetails(APIView):
         return Response(serializer.data)
     
     
-class QualityAssuranceView(APIView):
+class QualityAssuranceStatusView(APIView):
 
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        quality = QualityAssurance.objects.all()
+        quality = QualityAssuranceStatus.objects.all()
         serializer = QualityAssuranceSerializer(quality, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     
     def post(self,request):
         
-        Assuranceform = request.data.get("Assuranceform",[])
-        if not isinstance(Assuranceform, list):
+        materialform = request.data.get("materialform",[])
+        if not isinstance(materialform, list):
             return Response({"error":"Invalid data format"})
-        qualityserializer = QualityAssuranceSerializer(data=Assuranceform, many=True)
+        qualityserializer = QualityAssuranceSerializer(data=materialform, many=True)
         worker = RegisterIntoExistingProject.objects.filter(user=request.user).first()
 
         
@@ -615,7 +615,7 @@ class QualityAssuranceView(APIView):
     
 class QualityAssurancedetails(APIView):
     def get(self, request, pk):
-        quality = get_object_or_404(QualityAssurance, pk=pk)
+        quality = get_object_or_404(QualityAssuranceStatus, pk=pk)
         serializer = QualityAssuranceSerializer(quality)
         return Response(serializer.data)
     
@@ -663,6 +663,11 @@ class SupervisorProjectView(APIView):
 
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
+    def get(self, request):
+        supervisor = get_object_or_404(supervisorProject)
+        serializer = SupplierReportSerializer(supervisor, many=True)
+        return Response(serializer.data)
+        
 
    
     
@@ -730,7 +735,55 @@ class supervisorrequestdetails(APIView):
         serializer = SupplierReportSerializer(request)
         return Response(serializer.data)
         
-       
+  
+    
+class FinanceBudgetApprovalView(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        Approve = FinanceBudgetApproval.objects.all()
+        serial = BudgetApprovalSerializer(Approve,many=True)
+        return Response(serial.data)
+ 
+    def post(self,request):
+        Approveform = request.data.get("Approveform", [])  # Get list of reports
+        if not isinstance(Approveform, list):  
+            return Response({"error": "Invalid data format"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        projectName = get_object_or_404(User)
+
+        bugdetserial = BudgetApprovalSerializer(data=Approveform, many=True)  
+        if bugdetserial.is_valid():
+            bugdetserial.save(projectName=request.user)
+            return Response(bugdetserial.data, status=status.HTTP_201_CREATED)
+
+        return Response(bugdetserial.errors, status=status.HTTP_400_BAD_REQUEST)       
+
+    
+
+  
+    
+class FinalReportView(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        Final = FinalReport.objects.all()
+        serial = FinalReportSerializer(Final,many=True)
+        return Response(serial.data)
+ 
+    def post(self,request):
+        Finalform = request.data.get("Finalform", [])  # Get list of reports
+        if not isinstance(Finalform, list):  
+            return Response({"error": "Invalid data format"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user = get_object_or_404(User)
+
+        bugdetserial = FinalReportSerializer(data=Finalform, many=True)  
+        if bugdetserial.is_valid():
+            bugdetserial.save(user=request.user)
+            return Response(bugdetserial.data, status=status.HTTP_201_CREATED)
+
+        return Response(bugdetserial.errors, status=status.HTTP_400_BAD_REQUEST)       
 
     
 

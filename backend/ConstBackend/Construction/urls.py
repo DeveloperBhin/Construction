@@ -30,7 +30,7 @@ urlpatterns = [
     path('WorkerAttendance/<int:pk>/',WorkerAttendancedetails.as_view(),name='WorkerAttendance'),
     path('WorkerMaterialUsage/',WorkerMaterialUsageView.as_view(),name='WorkerMaterialUsage'),
     path('WorkerMaterialUsage/<int:pk>/',WorkerMaterialUsagedetails.as_view(),name='WorkerMaterialUsage'),
-    path('QualityAssurance/',QualityAssuranceView.as_view(),name='QualityAssurance'),
+    path('QualityAssuranceStatus/',QualityAssuranceStatusView.as_view(),name='QualityAssuranceStatus'),
     path('QualityAssurance/<int:pk>/',QualityAssurancedetails.as_view(),name='QualityAssurance'),
     path('SupplierReport/',SupplierReportView.as_view(),name='SupplierReport'),
     path('SupplierReport/<int:pk>/',SupplierReportdetails.as_view(),name='SupplierReport'),
@@ -38,6 +38,8 @@ urlpatterns = [
     path('SupervisorProject/<int:pk>/',supervisorProjectdetails.as_view(),name='SupervisorProject'),
     path('SupervisorRequest/',SupervisorrequestView.as_view(),name='SupervisorRequest'),
     path('SupervisorRequest/<int:pk>/',supervisorrequestdetails.as_view(),name='SupervisorRequest'),
-
+    path('FinanceBudgetApproval/',FinanceBudgetApprovalView.as_view(),name='FinanceBudgetApproval'),
+    path('FinalReport/',FinalReportView.as_view(),name='FinalReport'),
+   
 
 ]

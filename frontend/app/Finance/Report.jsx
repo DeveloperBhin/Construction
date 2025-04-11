@@ -12,37 +12,7 @@ const Home = () => {
       
     
   
-      <View style={styles.Manage}>
-        <Text >Manage Worker Report</Text>
-        <View style={styles.user}>
-        <TouchableOpacity  >
-       
-      <Link href='Finance/workerreport'  >
-      <Image style={styles.client} />{'\n'}
-      <Text style={styles. clienttext}>MaterialReport</Text>
      
-
-
-  
-     </Link>
-      </TouchableOpacity>
-    
-       <TouchableOpacity  >
-       
-       <Link href='Finance/Attendancereport'  >
-       <Image style={styles.client}  />{'\n'}
-       <Text style={styles. clienttext}>Attendance Report</Text>
- 
-      </Link>
-       </TouchableOpacity>
-     
-      </View>
-      
-      
-      
-     
-      </View>
-      
       <View style={styles.Manage}>
         <Text >Manage Finance Report</Text>
         <View style={styles.user}>
@@ -59,7 +29,7 @@ const Home = () => {
       </TouchableOpacity>
       <TouchableOpacity  >
        
-       <Link href='Finance/BudgetReport'  >
+       <Link href='Finance/BudgetApproval'  >
        <Image style={styles.client} />{'\n'}
        <Text style={styles. clienttext}>BudgetReport</Text>
    

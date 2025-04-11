@@ -76,7 +76,7 @@ class workerMaterialUsageSerializer(serializers.ModelSerializer):
   
 class QualityAssuranceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = QualityAssurance
+        model = QualityAssuranceStatus
         fields = '__all__'           
                      
     
@@ -101,4 +101,18 @@ class SupevisorrequestSerializer(serializers.ModelSerializer):
         fields = '__all__'           
                      
     
-    
+class BudgetApprovalSerializer(serializers.ModelSerializer):
+    ProjectName = serializers.PrimaryKeyRelatedField(read_only=True)
+   
+    class Meta:
+        model = FinanceBudgetApproval
+        fields = '__all__'           
+                     
+class FinalReportSerializer(serializers.ModelSerializer):
+     ProjectName = serializers.PrimaryKeyRelatedField(read_only=True)
+   
+     class Meta:
+        model = FinalReport
+        fields = '__all__'           
+                     
+     

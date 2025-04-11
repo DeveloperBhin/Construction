@@ -31,7 +31,15 @@ const Home = () => {
        
        <Link href='sitesupevisor/Attendancereport'  >
        <Image style={styles.client}  />{'\n'}
-       <Text style={styles. clienttext}>Attendance Report</Text>
+       <Text style={styles. clienttext}>Attendance </Text>
+ 
+      </Link>
+       </TouchableOpacity>
+       <TouchableOpacity  >
+       
+       <Link href='sitesupevisor/WorkerAssurance'  >
+       <Image style={styles.client}  />{'\n'}
+       <Text style={styles. clienttext}>Workers</Text>
  
       </Link>
        </TouchableOpacity>

@@ -42,7 +42,7 @@ const Home = () => {
       </TouchableOpacity>
       <TouchableOpacity  >
        
-       <Link href='FinanceManage'  >
+       <Link href='FinanceReports/Reports'  >
        <Image style={styles.Finance} source={require('../../assets/images/profit.png')} />{'\n'}
        <Text style={styles. clienttext}>Finance</Text>
    

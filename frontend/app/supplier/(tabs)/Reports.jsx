@@ -17,7 +17,7 @@ const Report = () => {
   const fetchMaterial = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://192.168.167.150:8000/FinanceMaterial/', {
+      const response = await fetch('http://192.168.1.150:8000/FinanceMaterial/', {
         method: 'GET',
         headers: {
           "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482", 'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ const Report = () => {
                           editable={false} 
                         />
            </Text>
-           <Text style={styles.itemText}>💲 material Amount Neede: {item.amount}
+           <Text style={styles.itemText}>💲 material Amount Needed: {item.amount}
               <TextInput
                           style={{ height: 0, opacity: 0 }} 
                           value={item.amount} 
@@ -81,7 +81,7 @@ const Report = () => {
                           editable={false} 
                         />
            </Text>
-           <Text style={styles.itemText}>💲 Finance Feedback Status: {item.Status}
+           <Text style={styles.itemText}>💲 Quality Assurance Feedback Status: {item.Status}
               <TextInput
                           style={{ height: 0, opacity: 0 }} 
                           value={item.Status} 

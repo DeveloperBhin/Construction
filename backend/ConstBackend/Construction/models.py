@@ -350,7 +350,7 @@ class SupplierReport(models.Model):
 
 
       
-class QualityAssurance(models.Model):    
+class QualityAssuranceStatus(models.Model):    
       worker = models.ForeignKey(RegisterIntoExistingProject,on_delete=models.CASCADE,default=None)
       name = models.CharField(max_length=255,default=None)
       email = models.EmailField(default=None)  
@@ -367,5 +367,73 @@ class QualityAssurance(models.Model):
       def __str__(self):
         return self.QualityStatus   
       
+class FinanceBudgetApproval(models.Model):    
+      projectName = models.ForeignKey(User, on_delete=models.CASCADE,default=None)
+      BudgetName = models.CharField(max_length=255,default=None)
+      Totalbudget=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True) 
+      AmountSpent = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      remainingbudget=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      
 
+      comments=models.CharField(max_length=255,blank=True,null=True)
+      Status = models.CharField (max_length=20,
+        choices=[("Pending", "Pending"), ("Approved", "Approved"), ("Rejected", "Rejected")],
+        default="Pending",
+    )
+      generated_at=models.DateTimeField(default=now)
+      
+      
+      def save(self, *args, **kwargs):
+        """Automatically calculate variance before saving."""
+        if self.Totalbudget and self.AmountSpent:
+            self.remainingbudget = self.Totalbudget - self.AmountSpent
+            
+        super().save(*args, **kwargs)
+
+      def __str__(self):
+        return f"{self.number} - Tbudget: {self.Totalbudget}, Aspent: {self.AmountSpent}"
+    
+class FinalReport(models.Model):  
+      user = models.ForeignKey(User,on_delete=models.CASCADE)  
+    
+      Status=  models.CharField(
+        max_length=20,
+        choices=[("Pending", "Pending"), ("Approved", "Approved"), ("Rejected", "Rejected")],
+        default="Pending",
+    )
+      amount = models.IntegerField()
+      price = models.FloatField()
+      name = models.CharField(max_length=255)
+      total = models.FloatField()
+      SupplierStatus=  models.CharField(
+        max_length=20,
+        choices=[("Pending", "Pending"), ("Approved", "Approved"), ("Rejected", "Rejected")],
+        default="Pending",
+    )
+      Quantity_Needed = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      Quantity_Available = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      price_Per_Quantity = models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      Total_Price=models.DecimalField(decimal_places=2,max_digits=12,blank=True,null=True)
+      
+      FinalStatus=  models.CharField(
+        max_length=20,
+        choices=[("Pending", "Pending"), ("Approved", "Approved"), ("Rejected", "Rejected")],
+        default="Pending",
+    )
+      generated_at=models.DateTimeField(default=now)
+      
+      def __str__(self):
+        return self.name 
+      def save(self, *args, **kwargs):
+        """Automatically calculate  before saving."""
+        if self.Quantity_Available and self.price_Per_Quantity:
+            
+            try:
+             Quantity_Available = Decimal (self.Quantity_Available)
+             self.Total_Price = Quantity_Available * self.price_Per_Quantity
+            except (ValueError, TypeError, InvalidOperation):
+                self.Total_Price = None
+        super().save(*args, **kwargs)
+
+    
  

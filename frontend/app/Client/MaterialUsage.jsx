@@ -1,120 +1,174 @@
-import { StyleSheet, Text, View, FlatList, ActivityIndicator,TextInput } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableOpacity, Button, TextInput } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 
-const Client = () => {
-  const [clients, setClients] = useState([]);  // Ensure it's an array
-  const [loading, setLoading] = useState(false);  // State to track loading status
- const[comments,setComments] = useState('')
+const Report = () => {
+  const [material, setMaterial] = useState([]);
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigation = useNavigation(); 
+
   useEffect(() => {
-    fetchClients();
+    fetchMaterial();
   }, []);
 
-  const fetchClients = async () => {
+  const fetchMaterial = async () => {
     setLoading(true);
-
     try {
-      const response = await fetch('http://192.168.167.150:8000/Clients/');
+      const response = await fetch('http://192.168.1.150:8000/WorkerMaterialUsage/', {
+        method: 'GET',
+        headers: {
+          "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482", 'Content-Type': 'application/json',
+        },
+      });
       const data = await response.json();
-      setClients(data);
+      const updatedData = data.map(item => ({
+        ...item,
+        Quantity_Needed: '',
+        price_Per_Quantity: '',
+        Total_Amount: '',
+      }));
+      setMaterial(updatedData);
     } catch (error) {
-      console.error("Error fetching clients:", error);
+      console.error("Error fetching material:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const renderItem = ({ item }) => (
-    <View style={styles.tableContainer}>
-      <View style={styles.row}>
-      <Text style={styles.cellHeader}>Task:</Text> 
-      <Text style={styles.cell}>{item.Task}</Text>
-      </View>
-      <View style={styles.row}>
-      <Text style={styles.cellHeader}>Status:</Text>
-      <Text style={styles.cell}>{item.Status}</Text>
-      </View>
-      <View style={styles.row}>
-      <Text style={styles.cellHeader}>Assignees: </Text>
-      <Text style={styles.cell}>{item.Assignees}</Text>
-      </View>
-      <View style={styles.row}>
-      <Text style={styles.cellHeader}>Due Date:</Text> 
-      <Text style={styles.cell}>{item.DueDate}</Text>
-      </View>
-      <View style={styles.row}>
-      <Text style={styles.cellHeader}>Tags:</Text>
-      <Text style={styles.cell}> {item.Tags}</Text>
-      </View>
-      <View style={styles.row}>
-      <Text style={styles.cellHeader}>File: </Text>
-      <Text style={styles.cell}>{item.File}</Text>
-      </View>
-        <TextInput style={styles.input} placeholder="Comments" value={comments} onChangeText={setComments} />
-             
+  const updateRow = (index, field, value) => {
+    const updatedMaterial = [...material];
+    updatedMaterial[index][field] = value;
+    setMaterial(updatedMaterial);
+  };
+
+  const deleteTransaction = (id) => {
+    setMaterial(material.filter(item => item.id !== id));
+  };
+
+  const handleSupplier = async () => {
+    const isEmpty = material.some(item => 
+      item.Quantity_Needed === '' || 
+      item.Quantity_Available === '' ||
+      item.price_Per_Quantity === '' || 
+      item.Total_Amount === ''
+    );
+
+    if (material.length === 0 || isEmpty) {
+      setMessage("Please fill in all fields before submitting.");
+      return;
+    }
+
+    setLoading(true);
+    setMessage('');
+    try {
+      const response = await fetch('http://192.168.167.150:8000/Sitesupervisor/', {
+        method: 'POST',
+        headers: {
+          "Authorization": "Token 0aacb12174c69ed99e1ab48c305a1000c3f4d482",  "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ supplierform: material }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setMessage("Form submitted successfully!");
+        navigation.navigate('sitesupervisor/(tabs)', { screen: 'Home' });
+      } else {
+        const errorData = await response.json();
+        setMessage(errorData.message || "An error occurred.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setMessage("An error occurred while submitting reports.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderItem = ({ item, index }) => (
+    <View style={styles.inputContainer}>
+      <Text style={styles.itemText}>💰 Material Name: {item.materialname}</Text>
+      <Text style={styles.itemText}>💲 Material Quantity taken: {item.Quantity_taken}</Text>
+      <Text style={styles.itemText}>💲 Material Quantity Used: {item.Quantity_usage}</Text>
+      <Text style={styles.itemText}>💲 Material Amount Remaining: {item.Remaining}</Text>
+      <Text style={styles.itemText}>💲 Material Total Usage Date: {item.Usage_date}</Text>
+
+
+      
+     
+
+      <TouchableOpacity onPress={() => deleteTransaction(item.id)} style={styles.deleteButton}>
+        <Ionicons name="trash" size={24} color="red" />
+      </TouchableOpacity>
     </View>
   );
 
   return (
     <View style={styles.container}>
+      <Text>Material Reports</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#9A340C" />
-      ) : clients.length > 0 ? (
+      ) : material.length > 0 ? (
         <FlatList
-          data={clients}
+          data={material}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           contentContainerStyle={styles.listContainer}
         />
       ) : (
-        <Text style={styles.noDataText}>No clients available</Text>
+        <Text style={styles.noDataText}>No Material available</Text>
       )}
+
+      <View style={styles.container}>
+        {loading ? (
+          <ActivityIndicator size="large" color="#D84315" />
+        ) : (
+          <Button title="Submit" onPress={handleSupplier} />
+        )}
+
+        {message ? <Text style={styles.message}>{message}</Text> : null}
+      </View>
     </View>
   );
 };
 
-export default Client;
+export default Report;
 
 const styles = StyleSheet.create({
-
-  clientCard: {
-    backgroundColor: '#f9f9f9',
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 8,
-    elevation: 1,
-  },
-  tableContainer: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
-    margin: 10,
+  container: {
     padding: 10,
   },
-  clientTask: { fontSize: 18, fontWeight: 'bold' },
-  clientStatus: { marginTop: 8, color: '#555' },
-  clientAssignees: { marginTop: 8, color: '#555' },
-  clientDueDate: { marginTop: 8, color: '#555' },
-  clientTags: { marginTop: 8, color: '#555' },
-  clientFile: { marginTop: 8, color: '#555' },
+  itemText: {
+    fontSize: 14,
+    marginVertical: 5,
+  },
+  input: {
+    height: 40,
+    borderBottomWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
+  listContainer: {
+    paddingBottom: 20,
+  },
   noDataText: {
     fontSize: 16,
     color: '#9A340C',
     marginTop: 20,
+    textAlign: 'center',
   },
-  row: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    paddingVertical: 8,
+  message: {
+    marginTop: 10,
+    color: 'red',
+    textAlign: 'center',
   },
-  cellHeader: {
-    flex: 0,
-    fontWeight: 'bold',
-    paddingHorizontal: 5,
-  },
-  cell: {
-    flex:0,
-    paddingHorizontal: 5,
-
+  deleteButton: {
+    marginTop: 10,
   },
 });

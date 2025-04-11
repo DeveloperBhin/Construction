@@ -18,7 +18,7 @@ const CreateProjectScreen = () => {
   useEffect(() => {
     const fetchWorks = async () => {
       try {
-        const response = await fetch('http://192.168.167.150:8000/register-into-existing-project/');
+        const response = await fetch('http://192.168.1.150:8000/register-into-existing-project/');
         const data = await response.json();
         setWorkOptions(data); // Assuming API returns a list of project names
       } catch (error) {
@@ -35,7 +35,7 @@ const CreateProjectScreen = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://192.168.167.150:8000/LoginIntoExistingProject/', {
+      const response = await fetch('http://192.168.1.150:8000/LoginIntoExistingProject/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' ,
           'Authorization': `Token ${userToken}`
